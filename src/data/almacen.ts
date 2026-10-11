@@ -77,7 +77,31 @@ class Almacen {
     window.addEventListener('offline', () => this.poner({ online: false, sync: 'sin conexión' }));
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') this.sincronizar(); });
     setInterval(() => { if (document.visibilityState === 'visible') this.sincronizar(); }, 30_000);
+    // Un borrado que quedó pendiente (se cerró la app antes de 6 s) se confirma ahora
+    const pendiente = await this.leerMeta<Cambios>('borradoPendiente');
+    if (pendiente) {
+      await this.ponerMeta('borradoPendiente', undefined);
+      await this.guardar(pendiente);
+    }
     if (this.estado.clave) this.sincronizar();
+  }
+
+  /** Aplica cambios solo en pantalla (borrado diferido): no se guardan ni se envían todavía. */
+  async enPantalla(c: Cambios) {
+    await this.ponerMeta('borradoPendiente', c);
+    this.poner({ todo: aplicar(this.estado.todo, c) });
+  }
+
+  /** Deshace un cambio hecho solo en pantalla, devolviendo los registros originales. */
+  async restaurar(originales: Cambios) {
+    await this.ponerMeta('borradoPendiente', undefined);
+    this.poner({ todo: aplicar(this.estado.todo, originales) });
+  }
+
+  /** Confirma un cambio hecho solo en pantalla: se guarda y se envía. */
+  async confirmar(c: Cambios) {
+    await this.ponerMeta('borradoPendiente', undefined);
+    await this.guardar(c);
   }
 
   /** Guarda cambios: al momento en pantalla y en el dispositivo; después se suben. */

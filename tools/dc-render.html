@@ -80,6 +80,7 @@ async function montar(nombre, props, destino) {
   const { doc } = await cargar(f);
   for (const h of doc.querySelectorAll('helmet > *')) document.head.appendChild(document.importNode(h, true));
   await montar(f, JSON.parse(new URLSearchParams(location.search).get('p') || '{}'), document.getElementById('root'));
+  await Promise.all(['400','500','600','700'].map((w) => document.fonts.load(w + ' 16px Figtree')).concat(['600','700','800'].map((w) => document.fonts.load(w + " 16px 'Bricolage Grotesque'"))));
   await document.fonts.ready;
   document.body.setAttribute('data-listo', '1');
 })();
