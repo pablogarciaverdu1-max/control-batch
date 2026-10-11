@@ -7,6 +7,9 @@ import { Compras } from './screens/compras/Compras';
 import { Producto } from './screens/compras/Producto';
 import { ProductoForm } from './screens/compras/ProductoForm';
 import { Avisos } from './ui/avisos';
+import { Platos } from './screens/platos/Platos';
+import { Plato } from './screens/platos/Plato';
+import { PlatoEditor } from './screens/platos/PlatoEditor';
 
 export function App() {
   const { listo } = useApp();
@@ -22,8 +25,10 @@ export function App() {
         <Route path="/compras/nuevo" element={<ProductoForm />} />
         <Route path="/producto/:id" element={<Producto />} />
         <Route path="/producto/:id/editar" element={<ProductoForm key="editar" />} />
-        <Route path="/platos" element={<Pendiente titulo="Platos" fase="d" seccion="platos" />} />
-        <Route path="/plato/*" element={<Pendiente titulo="Plato" fase="d" seccion="platos" />} />
+        <Route path="/platos" element={<Platos />} />
+        <Route path="/plato/nuevo" element={<PlatoEditor key="nuevo" />} />
+        <Route path="/plato/:id" element={<Plato />} />
+        <Route path="/plato/:id/editar" element={<PlatoEditor key="editar" />} />
         <Route path="/historial" element={<Pendiente titulo="Historial" fase="e" seccion="historial" />} />
         <Route path="/ajustes" element={<Pendiente titulo="Ajustes" fase="f" seccion="ajustes" />} />
         <Route path="*" element={<Inicio />} />
