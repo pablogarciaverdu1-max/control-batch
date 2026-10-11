@@ -31,11 +31,32 @@ function apiFalsa(): Plugin {
   };
 }
 
-export default defineConfig({
+/** `import f from './Code.gs?fabrica'` da una función que ejecuta Code.gs sin usar eval. */
+function fabricaGs(): Plugin {
+  return {
+    name: 'fabrica-gs',
+    enforce: 'pre',
+    async resolveId(id, importer) {
+      if (!id.endsWith('.gs?fabrica')) return null;
+      const r = await this.resolve(id.replace('?fabrica', ''), importer);
+      return r ? '\0' + r.id + '?fabrica' : null;
+    },
+    async load(id) {
+      if (!id.startsWith('\0') || !id.endsWith('?fabrica')) return null;
+      const { readFile } = await import('node:fs/promises');
+      const codigo = await readFile(id.slice(1, -'?fabrica'.length), 'utf8');
+      return 'export default function (SpreadsheetApp, PropertiesService, LockService, ContentService) {\n' + codigo + '\nreturn { doPost: doPost, doGet: doGet };\n}';
+    },
+  };
+}
+
+export default defineConfig(({ mode }) => ({
   base: BASE,
-  plugins: [react(), apiFalsa()],
+  plugins: [react(), apiFalsa(), fabricaGs()],
+  // La versión de prueba va en un solo archivo JS
+  build: mode === 'demo' ? { rollupOptions: { output: { inlineDynamicImports: true } } } : {},
   test: {
     environment: 'node',
     include: ['tests/**/*.test.ts'],
   },
-});
+}));
