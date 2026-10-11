@@ -10,6 +10,8 @@ import { Avisos } from './ui/avisos';
 import { Platos } from './screens/platos/Platos';
 import { Plato } from './screens/platos/Plato';
 import { PlatoEditor } from './screens/platos/PlatoEditor';
+import { Historial } from './screens/historial/Historial';
+import { ProduccionDetalle } from './screens/historial/ProduccionDetalle';
 
 export function App() {
   const { listo } = useApp();
@@ -20,7 +22,7 @@ export function App() {
         <Route path="/" element={<Inicio />} />
         <Route path="/produccion/nueva" element={<Produccion />} />
         <Route path="/produccion/:id/corregir" element={<Produccion />} />
-        <Route path="/produccion/:id" element={<Pendiente titulo="Producción" fase="e" seccion="historial" />} />
+        <Route path="/produccion/:id" element={<ProduccionDetalle />} />
         <Route path="/compras" element={<Compras />} />
         <Route path="/compras/nuevo" element={<ProductoForm />} />
         <Route path="/producto/:id" element={<Producto />} />
@@ -29,7 +31,7 @@ export function App() {
         <Route path="/plato/nuevo" element={<PlatoEditor key="nuevo" />} />
         <Route path="/plato/:id" element={<Plato />} />
         <Route path="/plato/:id/editar" element={<PlatoEditor key="editar" />} />
-        <Route path="/historial" element={<Pendiente titulo="Historial" fase="e" seccion="historial" />} />
+        <Route path="/historial" element={<Historial />} />
         <Route path="/ajustes" element={<Pendiente titulo="Ajustes" fase="f" seccion="ajustes" />} />
         <Route path="*" element={<Inicio />} />
       </Routes>

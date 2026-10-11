@@ -1,4 +1,6 @@
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { euros } from '../../calc/format';
+import { avisoOk } from '../../ui/avisos';
 import { useEsOrdenador } from '../../ui/marco';
 import { useProduccion } from './borrador';
 import { ProduccionMovil } from './ProduccionMovil';
@@ -17,8 +19,14 @@ export function Produccion() {
   const onGuardado = async () => {
     const p = await e.guardar();
     if (!p) return;
-    if (id) nav('/produccion/' + id, { replace: true });
-    else nav('/', { replace: true });
+    if (id) {
+      avisoOk('Cambios guardados', 'Cobra ' + euros(p.precioCobrar) + ' por ración');
+      nav('/produccion/' + id, { replace: true });
+    } else {
+      avisoOk(e.sinConexion ? 'Guardada en el móvil' : 'Producción guardada', 'Cobra ' + euros(p.precioCobrar) + ' por ración');
+      // En el móvil se ve en el Historial (como en el diseño); en el ordenador, en Inicio
+      nav(ord ? '/' : '/historial?plato=' + p.platoId, { replace: true });
+    }
   };
   const props = { e, onGuardado, onCerrar, rutaCerrar };
   return ord ? <ProduccionOrdenador {...props} /> : <ProduccionMovil {...props} />;
