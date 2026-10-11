@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><title>dc-render</title></head>
+<body style="margin:0">
+<div id="root"></div>
+<script>
+// Mini intérprete de los .dc.html del diseño, solo para hacer capturas estáticas.
+class DCLogic {
+  constructor(props) { this.props = props || {}; this.state = {}; }
+  setState(s) { Object.assign(this.state, s); }
+}
+const cache = {};
+async function cargar(nombre) {
+  if (!cache[nombre]) {
+    const txt = await (await fetch('/diseno/' + nombre + '.dc.html')).text();
+    const doc = new DOMParser().parseFromString(txt, 'text/html');
+    const script = doc.querySelector('script[type="text/x-dc"]');
+    const Component = new Function('DCLogic', script.textContent + '; return Component;')(DCLogic);
+    const props = JSON.parse(script.getAttribute('data-props') || '{}');
+    cache[nombre] = { doc, Component, props };
+  }
+  return cache[nombre];
+}
+function buscar(scope, expr) {
+  expr = expr.trim();
+  if (expr === 'true') return true; if (expr === 'false') return false;
+  return expr.split('.').reduce((o, k) => (o == null ? undefined : o[k]), scope);
+}
+function interpolar(str, scope) {
+  const m = str.match(/^\{\{([^}]*)\}\}$/);
+  if (m) return buscar(scope, m[1]);
+  return str.replace(/\{\{([^}]*)\}\}/g, (_, e) => { const v = buscar(scope, e); return v == null ? '' : String(v); });
+}
+function camel(s) { return s.replace(/-([a-z])/g, (_, c) => c.toUpperCase()); }
+async function render(nodo, scope, destino) {
+  for (const n of [...nodo.childNodes]) {
+    if (n.nodeType === 3) { destino.appendChild(document.createTextNode(interpolar(n.textContent, scope))); continue; }
+    if (n.nodeType !== 1) continue;
+    const tag = n.tagName.toLowerCase();
+    if (tag === 'helmet') continue;
+    if (tag === 'sc-for') {
+      const lista = interpolar(n.getAttribute('list'), scope) || [];
+      const as = n.getAttribute('as');
+      for (const item of lista) await render(n, Object.assign({}, scope, { [as]: item }), destino);
+      continue;
+    }
+    if (tag === 'sc-if') { if (interpolar(n.getAttribute('value'), scope)) await render(n, scope, destino); continue; }
+    if (tag === 'dc-import') {
+      const props = {};
+      for (const a of n.attributes) if (a.name !== 'name' && !a.name.startsWith('hint')) props[camel(a.name)] = interpolar(a.value, scope);
+      await montar(n.getAttribute('name'), props, destino);
+      continue;
+    }
+    const el = document.createElement(tag === 'svg' || n.namespaceURI === 'http://www.w3.org/2000/svg' ? tag : tag);
+    let out;
+    if (n.closest('svg') || tag === 'svg') out = document.createElementNS('http://www.w3.org/2000/svg', n.tagName);
+    else out = el;
+    for (const a of n.attributes) {
+      if (/^on/i.test(a.name)) continue;
+      const v = interpolar(a.value, scope);
+      if (a.name === 'disabled') { if (v === true || v === 'true') out.setAttribute('disabled', ''); continue; }
+      if (typeof v === 'function') continue;
+      out.setAttribute(a.name, v == null ? '' : String(v));
+    }
+    await render(n, scope, out);
+    destino.appendChild(out);
+  }
+}
+async function montar(nombre, props, destino) {
+  const { doc, Component, props: defs } = await cargar(nombre);
+  const p = {};
+  for (const k in defs) if (k[0] !== '$' && 'default' in defs[k]) p[k] = defs[k].default;
+  Object.assign(p, props);
+  const c = new Component(p);
+  const vals = c.renderVals();
+  await render(doc.querySelector('x-dc'), vals, destino);
+}
+(async () => {
+  const f = new URLSearchParams(location.search).get('f');
+  const { doc } = await cargar(f);
+  for (const h of doc.querySelectorAll('helmet > *')) document.head.appendChild(document.importNode(h, true));
+  await montar(f, JSON.parse(new URLSearchParams(location.search).get('p') || '{}'), document.getElementById('root'));
+  await document.fonts.ready;
+  document.body.setAttribute('data-listo', '1');
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Compras</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;family=Figtree:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#14213D;background:#EEF1F8}
+a{color:#14213D;text-decoration:none}a:hover{color:#0b1426}
+.num{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:-0.02em}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+input::placeholder{color:#5D6882}
+input:focus{outline:3px solid #FF9F1C;outline-offset:1px}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; background: #EEF1F8; display: flex; flex-direction: column; overflow: hidden; position: relative; font-family: 'Figtree', system-ui, sans-serif; color: #14213D">
+  <header style="padding: 28px 20px 12px; display: flex; flex-direction: column; gap: 14px">
+    <div style="display: flex; align-items: center; justify-content: space-between">
+      <h1 class="num" style="margin: 0; font-size: 34px; font-weight: 800">Compras</h1>
+      <a href="ProductoForm.dc.html" aria-label="Añadir producto" style="width: 56px; height: 56px; border-radius: 18px; background: #FF9F1C; color: #14213D; display: flex; align-items: center; justify-content: center">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+      </a>
+    </div>
+    <label style="display: flex; align-items: center; gap: 10px; background: #FFFFFF; border-radius: 18px; padding: 0 16px; height: 56px; border: 2px solid #DCE2EE">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4A5672" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+      <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Buscar producto</span>
+      <input type="search" placeholder="Buscar producto" value="{{query}}" onChange="{{onSearch}}" style="flex: 1; border: none; outline: none; background: transparent; font-size: 17px; font-weight: 500; height: 100%">
+    </label>
+    <div role="group" aria-label="Filtrar por supermercado" style="display: flex; gap: 8px">
+      <sc-for list="{{chips}}" as="c" hint-placeholder-count="4">
+        <button type="button" onClick="{{c.pick}}" aria-pressed="{{c.on}}" style="{{c.style}}">{{c.label}}</button>
+      </sc-for>
+    </div>
+  </header>
+
+  <main style="flex: 1; overflow-y: auto; padding: 4px 20px 24px; display: flex; flex-direction: column; gap: 10px">
+    <span style="font-size: 14px; font-weight: 600; color: #4A5672">{{countLabel}} · toca un precio para cambiarlo</span>
+    <sc-for list="{{items}}" as="p" hint-placeholder-count="6">
+      <div style="{{p.cardStyle}}">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px">
+          <a href="Producto.dc.html" style="display: flex; flex-direction: column; gap: 6px; min-width: 0; flex: 1; padding: 4px 0">
+            <span style="font-size: 17px; font-weight: 700">{{p.name}}</span>
+            <span style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: #4A5672">
+              <span style="{{p.badge}}">{{p.shop}}</span>{{p.content}}
+            </span>
+          </a>
+          <sc-if value="{{p.notEditing}}" hint-placeholder-val="{{ true }}">
+            <button type="button" onClick="{{p.edit}}" aria-label="Cambiar precio de {{p.name}}" style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0; min-height: 56px; padding: 6px 8px; margin-right: -8px; border: none; border-radius: 14px; background: transparent">
+              <span class="num" style="display: flex; align-items: center; gap: 6px; font-size: 24px; font-weight: 800; line-height: 1; text-decoration: underline dashed #9AA6C0; text-underline-offset: 5px; text-decoration-thickness: 2px">{{p.price}}</span>
+              <span style="font-size: 13px; font-weight: 600; color: #4A5672">{{p.unitPrice}}</span>
+            </button>
+          </sc-if>
+        </div>
+        <sc-if value="{{p.editing}}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-direction: column; gap: 10px; padding-top: 12px; margin-top: 12px; border-top: 1px solid #EEF1F8">
+            <label style="display: flex; flex-direction: column; gap: 6px">
+              <span style="display: flex; justify-content: space-between; font-size: 14px; font-weight: 700">Precio nuevo del envase <span style="font-weight: 600; color: #4A5672">antes {{p.price}}</span></span>
+              <span style="display: flex; align-items: center; height: 60px; border-radius: 16px; border: 3px solid #FF9F1C; background: #FFFFFF; padding: 0 16px; box-sizing: border-box">
+                <input type="text" inputmode="decimal" value="{{draft}}" onChange="{{onDraft}}" class="num" style="flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-size: 28px; font-weight: 800">
+                <span class="num" style="font-size: 24px; font-weight: 800; color: #4A5672">€</span>
+              </span>
+            </label>
+            <span style="font-size: 14px; font-weight: 600; color: #4A5672">{{draftUnit}} · lo usan {{p.uses}}</span>
+            <div style="display: flex; gap: 8px">
+              <button type="button" onClick="{{cancel}}" style="flex: 1; height: 54px; border-radius: 16px; border: 2px solid #DCE2EE; background: #FFFFFF; font-size: 16px; font-weight: 700">Cancelar</button>
+              <button type="button" onClick="{{save}}" style="flex: 2; height: 54px; border-radius: 16px; border: none; background: #FF9F1C; color: #14213D; font-size: 16px; font-weight: 800">Guardar precio</button>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </sc-for>
+    <sc-if value="{{noResults}}" hint-placeholder-val="{{ false }}">
+      <div style="text-align: center; padding: 40px 12px; color: #4A5672; font-size: 16px; font-weight: 500">No hay productos con ese nombre.</div>
+    </sc-if>
+  </main>
+
+  <sc-if value="{{toastOn}}" hint-placeholder-val="{{ false }}">
+    <div role="status" style="position: absolute; left: 16px; right: 16px; bottom: 100px; background: #14213D; color: #FFFFFF; border-radius: 18px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 12px 30px rgba(20,33,61,0.30)">
+      <span style="width: 30px; height: 30px; border-radius: 50%; background: #2E8B57; display: flex; align-items: center; justify-content: center; flex-shrink: 0">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>
+      </span>
+      <span style="display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 15px; font-weight: 700">Precio actualizado</span>
+        <span style="font-size: 14px; font-weight: 500; color: #C9D1E4">{{toastSub}}</span>
+      </span>
+    </div>
+  </sc-if>
+
+  <nav aria-label="Navegación principal" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: #FFFFFF; border-top: 1px solid #DCE2EE; padding: 8px 8px 22px">
+    <a href="Main.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 0; min-height: 56px; box-sizing: border-box; color: #4A5672; font-size: 13px; font-weight: 600">
+      <span style="padding: 4px 16px; display: flex"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span>Inicio
+    </a>
+    <a href="Compras.dc.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 0; min-height: 56px; box-sizing: border-box; color: #14213D; font-size: 13px; font-weight: 700">
+      <span style="background: #FF9F1C; border-radius: 14px; padding: 4px 16px; display: flex"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.4 11.2a1 1 0 0 0 1 .8h9.7a1 1 0 0 0 1-.8L21 7H6"/></svg></span>Compras
+    </a>
+    <a href="Platos.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 0; min-height: 56px; box-sizing: border-box; color: #4A5672; font-size: 13px; font-weight: 600">
+      <span style="padding: 4px 16px; display: flex"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10h16v7a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z"/><path d="M2 10h20"/><path d="M9 6c0-1 1-1 1-2M14 6c0-1 1-1 1-2"/></svg></span>Platos
+    </a>
+    <a href="Historial.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 0; min-height: 56px; box-sizing: border-box; color: #4A5672; font-size: 13px; font-weight: 600">
+      <span style="padding: 4px 16px; display: flex"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>Historial
+    </a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"editar":{"editor":"text","default":""},"buscar":{"editor":"text","default":""},"aviso":{"editor":"boolean","default":false},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // [nombre, súper, precio, contenido, unidad, platos que lo usan]
+    this.raw = [
+      ['Arroz redondo', 'Mercadona', 1.15, 1000, 'g', 0],
+      ['Caldo de cocido', 'Mercadona', 0.90, 1000, 'ml', 0],
+      ['Caldo de pollo', 'Mercadona', 0.75, 1000, 'ml', 0],
+      ['Carne picada cerdo/ternera', 'Mercadona', 8.00, 1000, 'g', 1],
+      ['Cebolla tierna', 'Mercadona', 1.70, 3, 'ud', 5],
+      ['Contramuslos de pollo deshuesados', 'Mercadona', 3.74, 550, 'g', 2],
+      ['Curry en especia', 'Otro', 1.10, 57, 'g', 1],
+      ['Espinazo de cerdo', 'Mercadona', 1.70, 1, 'envase', 2],
+      ['Garbanzo pedrosillano', 'Mercadona', 0.90, 570, 'g', 1],
+      ['Guisantes', 'Mercadona', 0.95, 1, 'envase', 2],
+      ['Huevos', 'Mercadona', 1.80, 6, 'ud', 2],
+      ['Leche de coco', 'Mercadona', 1.30, 1, 'envase', 1],
+      ['Muslitos de pollo', 'Mercadona', 3.37, 5, 'ud', 1],
+      ['Pan bimbo sin corteza', 'Mercadona', 1.05, 18, 'ud', 1],
+      ['Patata', 'Mercadona', 0.37, 1, 'ud', 1],
+      ['Pimiento verde', 'Mercadona', 0.23, 1, 'ud', 1],
+      ['Pollo entero', 'Mercadona', 8.60, 1, 'ud', 1],
+      ['Preparado de verduras para caldo', 'Aldi', 2.00, 1, 'envase', 2],
+      ['Salsa de soja', 'Mercadona', 1.20, 250, 'ml', 1],
+      ['Setas deshidratadas', 'Aldi', 3.00, 1, 'envase', 1],
+      ['Tomate triturado', 'Mercadona', 0.55, 1, 'envase', 3],
+      ['Zanahoria', 'Mercadona', 1.00, 1, 'ud', 2]
+    ];
+    const ed = props.editar ?? '';
+    const found = this.raw.find(r => r[0] === ed);
+    const prices = {};
+    this.raw.forEach(r => { prices[r[0]] = r[2]; });
+    this.state = {
+      shop: 'Todos', query: props.buscar ?? '', prices,
+      editing: found ? ed : '', draft: found ? found[2].toFixed(2).replace('.', ',') : '',
+      toast: (props.aviso ?? false) ? 'Cambia el coste de 3 platos' : ''
+    };
+  }
+  renderVals() {
+    const s = this.state;
+    const eur = n => (Math.round(n * 100 + 1e-6) / 100).toFixed(2).replace('.', ',') + ' €';
+    const unitP = (price, content, unit) => unit === 'g' ? eur(price / content * 1000) + '/kg'
+      : unit === 'ml' ? eur(price / content * 1000) + '/l' : eur(price / content) + '/' + unit;
+    const platos = n => n === 0 ? 'ningún plato' : (n === 1 ? '1 plato' : n + ' platos');
+    const parse = v => { const n = parseFloat(String(v).replace(',', '.')); return isNaN(n) || n <= 0 ? null : n; };
+    const q = s.query.trim().toLowerCase();
+    const items = this.raw
+      .filter(r => s.shop === 'Todos' || r[1] === s.shop)
+      .filter(r => !q || r[0].toLowerCase().includes(q))
+      .map(([name, shop, _p, content, unit, uses]) => {
+        const price = s.prices[name];
+        const editing = s.editing === name;
+        return {
+          name, shop, price: eur(price), unitPrice: unitP(price, content, unit),
+          content: content + ' ' + (unit === 'envase' && content !== 1 ? 'envases' : unit),
+          uses: platos(uses), editing, notEditing: !editing,
+          edit: () => this.setState({ editing: name, draft: price.toFixed(2).replace('.', ','), toast: '' }),
+          cardStyle: 'background:#FFFFFF;border-radius:20px;padding:12px 18px;box-sizing:border-box;' +
+            (editing ? 'border:2px solid #14213D;box-shadow:0 10px 24px rgba(20,33,61,0.12)' : 'border:2px solid #FFFFFF'),
+          badge: 'border-radius:8px;padding:2px 8px;font-size:12px;font-weight:700;' + (shop === 'Mercadona'
+            ? 'background:#E6F1E9;color:#1D5A31' : (shop === 'Aldi' ? 'background:#E4ECFA;color:#1B3A78' : 'background:#ECEDEF;color:#3A4152'))
+        };
+      });
+    const cur = this.raw.find(r => r[0] === s.editing);
+    const dv = parse(s.draft);
+    const draftUnit = cur && dv ? 'Te saldrá a ' + unitP(dv, cur[3], cur[4]) : 'Escribe el precio que has pagado';
+    const chips = ['Todos', 'Mercadona', 'Aldi', 'Otro'].map(label => {
+      const on = s.shop === label;
+      return { label, on: on ? 'true' : 'false', pick: () => this.setState({ shop: label }),
+        style: 'height:44px;padding:0 15px;border-radius:22px;font-size:15px;font-weight:700;' +
+          (on ? 'background:#14213D;color:#FFFFFF;border:2px solid #14213D' : 'background:#FFFFFF;color:#14213D;border:2px solid #DCE2EE') };
+    });
+    return {
+      items, chips, draftUnit,
+      query: s.query, onSearch: e => this.setState({ query: e.target.value }),
+      draft: s.draft, onDraft: e => this.setState({ draft: e.target.value }),
+      cancel: () => this.setState({ editing: '' }),
+      save: () => {
+        if (!cur || !dv) return;
+        const prices = Object.assign({}, s.prices); prices[cur[0]] = dv;
+        const n = cur[5];
+        this.setState({ prices, editing: '', toast: n === 0 ? 'Ningún plato usa este producto' : 'Cambia el coste de ' + platos(n) });
+        clearTimeout(this.t); this.t = setTimeout(() => this.setState({ toast: '' }), 4000);
+      },
+      toastOn: !!s.toast, toastSub: s.toast,
+      noResults: items.length === 0,
+      countLabel: items.length === 1 ? '1 producto' : items.length + ' productos'
+    };
+  }
+}
+</script>
+</body>
+</html>

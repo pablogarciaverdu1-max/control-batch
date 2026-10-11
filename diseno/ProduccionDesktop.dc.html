@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Nueva producción · ordenador</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;family=Figtree:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#14213D;background:#EEF1F8}
+a{color:#14213D;text-decoration:none}a:hover{color:#0b1426}
+.num{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:-0.02em}
+button{font:inherit;color:inherit;cursor:pointer}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #EEF1F8; font-family: 'Figtree', system-ui, sans-serif; color: #14213D; padding: 32px 40px 56px; box-sizing: border-box">
+  <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px">
+    <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px">
+      <a href="InicioDesktop.dc.html" aria-label="Volver a Inicio" style="width: 52px; height: 52px; border-radius: 16px; background: #FFFFFF; display: flex; align-items: center; justify-content: center">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+      </a>
+      <h1 class="num" style="margin: 0; font-size: 38px; font-weight: 800">Nueva producción</h1>
+    </header>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start">
+      <div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 24px">
+        <section style="background: #FFFFFF; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; gap: 18px">
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px">
+            <h2 style="margin: 0; font-size: 20px; font-weight: 700"><span class="num" style="color: #9A4A00">1</span> · Plato y fecha</h2>
+            <div role="group" aria-label="Fecha" style="display: flex; gap: 8px">
+              <sc-for list="{{dates}}" as="d" hint-placeholder-count="3">
+                <button type="button" onClick="{{d.pick}}" aria-pressed="{{d.on}}" style="{{d.style}}">{{d.label}}</button>
+              </sc-for>
+            </div>
+          </div>
+          <div role="group" aria-label="Plato" style="display: flex; flex-wrap: wrap; gap: 10px">
+            <sc-for list="{{dishes}}" as="d" hint-placeholder-count="5">
+              <button type="button" onClick="{{d.pick}}" aria-pressed="{{d.on}}" style="{{d.style}}">{{d.name}}</button>
+            </sc-for>
+          </div>
+        </section>
+
+        <section style="display: flex; flex-direction: column; gap: 14px">
+          <div style="display: flex; justify-content: space-between; align-items: baseline">
+            <span style="display: flex; flex-direction: column; gap: 2px">
+              <h2 style="margin: 0; font-size: 20px; font-weight: 700"><span class="num" style="color: #9A4A00">2</span> · Lo que has usado de verdad</h2>
+              <span style="font-size: 14px; font-weight: 600; color: #4A5672">Usa − y + o haz clic en el número para escribirlo</span>
+            </span>
+            <button type="button" onClick="{{reset}}" style="height: 44px; padding: 0 14px; border-radius: 12px; border: none; background: transparent; font-size: 15px; font-weight: 700">Volver a la receta</button>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px">
+            <sc-for list="{{items}}" as="it" hint-placeholder-count="5">
+              <div style="background: #FFFFFF; border-radius: 22px; padding: 16px 16px 16px 20px; display: flex; flex-direction: column; gap: 12px">
+                <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 10px">
+                  <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+                    <span style="font-size: 17px; font-weight: 700">{{it.name}}</span>
+                    <span style="{{it.noteStyle}}">{{it.note}}</span>
+                  </span>
+                  <span style="display: flex; align-items: center; gap: 4px; flex-shrink: 0">
+                    <span class="num" style="font-size: 22px; font-weight: 800">{{it.cost}}</span>
+                    <button type="button" onClick="{{it.remove}}" aria-label="Quitar ingrediente" style="width: 44px; height: 44px; border-radius: 12px; border: none; background: transparent; color: #4A5672; display: flex; align-items: center; justify-content: center">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>
+                    </button>
+                  </span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #EEF1F8; border-radius: 16px; padding: 6px">
+                  <button type="button" onClick="{{it.dec}}" aria-label="Menos" style="width: 56px; height: 52px; border-radius: 12px; border: none; background: #FFFFFF; display: flex; align-items: center; justify-content: center">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg>
+                  </button>
+                  <span class="num" style="font-size: 24px; font-weight: 800; text-decoration: underline dashed #9AA6C0; text-underline-offset: 6px; text-decoration-thickness: 2px">{{it.qty}}</span>
+                  <button type="button" onClick="{{it.inc}}" aria-label="Más" style="width: 56px; height: 52px; border-radius: 12px; border: none; background: #14213D; color: #FFFFFF; display: flex; align-items: center; justify-content: center">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                  </button>
+                </div>
+              </div>
+            </sc-for>
+            <div style="border: 2px dashed #9AA6C0; border-radius: 22px; padding: 16px; display: flex; flex-direction: column; gap: 10px">
+              <span style="font-size: 16px; font-weight: 700">Añadir ingrediente</span>
+              <div style="display: flex; flex-wrap: wrap; gap: 8px">
+                <sc-for list="{{available}}" as="a" hint-placeholder-count="4">
+                  <button type="button" onClick="{{a.add}}" style="height: 44px; padding: 0 14px; border-radius: 12px; border: 2px solid #DCE2EE; background: #FFFFFF; font-size: 14px; font-weight: 700">+ {{a.name}}</button>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <aside aria-live="polite" style="flex: 1 1 340px; min-width: 0; background: #14213D; color: #FFFFFF; border-radius: 28px; padding: 28px; display: flex; flex-direction: column; gap: 22px">
+        <span style="display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 15px; font-weight: 600; color: #C9D1E4">{{dishName}} · {{dateSub}}</span>
+          <span class="num" style="font-size: 20px; font-weight: 800"><span style="color: #FF9F1C">3</span> · Resultado</span>
+        </span>
+        <div style="display: flex; flex-direction: column; gap: 10px; background: rgba(255,255,255,0.08); border-radius: 20px; padding: 16px">
+          <span style="display: flex; flex-direction: column; gap: 2px">
+            <span style="font-size: 15px; font-weight: 700">{{madeTitle}}</span>
+            <span style="font-size: 13px; font-weight: 500; color: #C9D1E4">{{madeSub}}</span>
+          </span>
+          <div style="display: flex; align-items: center; justify-content: space-between">
+            <button type="button" onClick="{{decMade}}" aria-label="Una menos" style="width: 56px; height: 52px; border-radius: 14px; border: none; background: #FFFFFF; color: #14213D; display: flex; align-items: center; justify-content: center">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg>
+            </button>
+            <span class="num" style="font-size: 34px; font-weight: 800">{{made}}</span>
+            <button type="button" onClick="{{incMade}}" aria-label="Una más" style="width: 56px; height: 52px; border-radius: 14px; border: none; background: #FF9F1C; color: #14213D; display: flex; align-items: center; justify-content: center">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+          </div>
+          <sc-if value="{{byUnits}}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; padding: 0 4px">
+              <span style="font-size: 14px; font-weight: 600; color: #C9D1E4">Salen</span>
+              <span class="num" style="font-size: 22px; font-weight: 800">{{portionsLabel}}</span>
+            </div>
+          </sc-if>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; padding: 8px 0">
+          <span style="font-size: 16px; font-weight: 700; color: #C9D1E4">Cobra a tus amigos</span>
+          <span class="num" style="font-size: 104px; font-weight: 800; line-height: 1; color: #FF9F1C">{{charge}}</span>
+          <span style="font-size: 18px; font-weight: 700">por ración</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+          <div style="background: rgba(255,255,255,0.08); border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 2px">
+            <span style="font-size: 13px; font-weight: 600; color: #C9D1E4">Coste del lote</span>
+            <span class="num" style="font-size: 26px; font-weight: 800">{{total}}</span>
+          </div>
+          <div style="background: rgba(255,255,255,0.08); border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 2px">
+            <span style="font-size: 13px; font-weight: 600; color: #C9D1E4">Coste por ración</span>
+            <span class="num" style="font-size: 26px; font-weight: 800">{{perPortion}}</span>
+          </div>
+          <sc-if value="{{byUnits}}" hint-placeholder-val="{{ false }}">
+            <div style="background: #FFE8C7; color: #14213D; border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 2px">
+              <span style="font-size: 13px; font-weight: 700; color: #7A3E00">Por {{unitSingular}}</span>
+              <span class="num" style="font-size: 26px; font-weight: 800">{{perUnit}}</span>
+            </div>
+            <div style="background: rgba(255,255,255,0.08); border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 2px">
+              <span style="font-size: 13px; font-weight: 600; color: #C9D1E4">Raciones</span>
+              <span class="num" style="font-size: 26px; font-weight: 800">{{portionsNum}}</span>
+            </div>
+          </sc-if>
+        </div>
+        <span style="font-size: 13px; font-weight: 500; color: #C9D1E4; text-align: center">Redondeado al alza a los 10 céntimos</span>
+        <a href="InicioDesktop.dc.html" style="height: 64px; border-radius: 20px; background: #FF9F1C; color: #14213D; font-size: 19px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 10px">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>
+          Guardar producción
+        </a>
+      </aside>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const ud = (name, shop, price, content, unit, step) => ({ name, shop, unit, ppu: price / content, step: step || (unit === 'g' ? 25 : unit === 'ml' ? 10 : 0.25) });
+    this.P = {
+      espinazo: ud('Espinazo de cerdo', 'Mercadona', 1.70, 1, 'envase'),
+      muslitos: ud('Muslitos de pollo', 'Mercadona', 3.37, 5, 'ud'),
+      garbanzo: ud('Garbanzo pedrosillano', 'Mercadona', 0.90, 570, 'g'),
+      guisantes: ud('Guisantes', 'Mercadona', 0.95, 1, 'envase'),
+      tomate: ud('Tomate triturado', 'Mercadona', 0.55, 1, 'envase'),
+      setas: ud('Setas deshidratadas', 'Aldi', 3.00, 1, 'envase'),
+      verduras: ud('Preparado de verduras para caldo', 'Aldi', 2.00, 1, 'envase'),
+      pan: ud('Pan bimbo sin corteza', 'Mercadona', 1.05, 18, 'ud'),
+      huevos: ud('Huevos', 'Mercadona', 1.80, 6, 'ud'),
+      cebolla: ud('Cebolla tierna', 'Mercadona', 1.70, 3, 'ud'),
+      picada: ud('Carne picada cerdo/ternera', 'Mercadona', 8.00, 1000, 'g'),
+      caldoPollo: ud('Caldo de pollo', 'Mercadona', 0.75, 1000, 'ml', 50),
+      caldoCocido: ud('Caldo de cocido', 'Mercadona', 0.90, 1000, 'ml', 50),
+      pimiento: ud('Pimiento verde', 'Mercadona', 0.23, 1, 'ud'),
+      arroz: ud('Arroz redondo', 'Mercadona', 1.15, 1000, 'g'),
+      contramuslos: ud('Contramuslos de pollo deshuesados', 'Mercadona', 3.74, 550, 'g'),
+      zanahoria: ud('Zanahoria', 'Mercadona', 1.00, 1, 'ud'),
+      soja: ud('Salsa de soja', 'Mercadona', 1.20, 250, 'ml', 5),
+      coco: ud('Leche de coco', 'Mercadona', 1.30, 1, 'envase'),
+      patata: ud('Patata', 'Mercadona', 0.37, 1, 'ud'),
+      pollo: ud('Pollo entero', 'Mercadona', 8.60, 1, 'ud'),
+      curry: ud('Curry en especia', 'Otro', 1.10, 57, 'g', 5)
+    };
+    this.D = [
+      { id: 'curry', name: 'Pollo al curry', count: 'raciones', made: 4, per: 1, items: [['contramuslos', 300], ['coco', 1], ['tomate', 0.5], ['curry', 10], ['cebolla', 0.5]] },
+      { id: 'albondigas', name: 'Albóndigas en salsa con guisantes', count: 'albóndigas', one: 'albóndiga', made: 30, per: 5, items: [['picada', 500], ['cebolla', 2], ['guisantes', 0.5], ['pan', 1], ['verduras', 1], ['espinazo', 1], ['huevos', 1], ['tomate', 0.5]] },
+      { id: 'garbanzos', name: 'Guiso de garbanzos con pollo', count: 'raciones', made: 4, per: 1, items: [['garbanzo', 570], ['muslitos', 5], ['tomate', 0.5], ['setas', 1], ['cebolla', 0.5], ['pimiento', 0.5], ['espinazo', 1], ['verduras', 1]] },
+      { id: 'arroz', name: 'Arroz con pollo y verduras', count: 'raciones', made: 4, per: 1, items: [['contramuslos', 150], ['huevos', 1], ['guisantes', 0.25], ['zanahoria', 0.5], ['cebolla', 0.5], ['soja', 30]] },
+      { id: 'horno', name: 'Pollo al horno con patatas', count: 'raciones', made: 4, per: 1, items: [['pollo', 0.4], ['patata', 2], ['cebolla', 1], ['zanahoria', 1]] }
+    ];
+    this.state = Object.assign({ date: 'hoy' }, this.load('albondigas'));
+  }
+  load(id) {
+    const d = this.D.find(x => x.id === id);
+    return { dish: id, made: d.made, items: d.items.map(([pid, q]) => ({ pid, qty: q, recipe: q })) };
+  }
+  setItems(fn) { this.setState({ items: fn(this.state.items.slice()) }); }
+  renderVals() {
+    const s = this.state, P = this.P;
+    const eur = n => (Math.round(n * 100 + 1e-6) / 100).toFixed(2).replace('.', ',') + ' €';
+    const fnum = n => (Math.round(n * 100) / 100).toString().replace('.', ',');
+    const fq = (q, u) => u === 'envase' ? fnum(q) + (q > 1 ? ' envases' : ' envase') : fnum(q) + ' ' + u;
+    const dish = this.D.find(x => x.id === s.dish);
+    const byUnits = dish.count !== 'raciones';
+    const portions = s.made / dish.per;
+    const total = s.items.reduce((a, it) => a + it.qty * P[it.pid].ppu, 0);
+    const per = portions > 0 ? total / portions : 0;
+    const charge = Math.ceil(per * 10 - 1e-9) / 10;
+    const items = s.items.map((it, idx) => {
+      const p = P[it.pid];
+      const changed = it.recipe > 0 && Math.abs(it.qty - it.recipe) > 1e-9;
+      return {
+        name: p.name, qty: fq(it.qty, p.unit), cost: eur(it.qty * p.ppu),
+        note: it.recipe === 0 ? 'Añadido hoy' : (changed ? 'Receta: ' + fq(it.recipe, p.unit) : 'Como en la receta'),
+        noteStyle: 'font-size:13px;font-weight:700;color:' + ((changed || it.recipe === 0) ? '#9A4A00' : '#4A5672'),
+        inc: () => this.setItems(a => { a[idx] = Object.assign({}, a[idx], { qty: Math.round((a[idx].qty + p.step) * 100) / 100 }); return a; }),
+        dec: () => this.setItems(a => { a[idx] = Object.assign({}, a[idx], { qty: Math.max(0, Math.round((a[idx].qty - p.step) * 100) / 100) }); return a; }),
+        remove: () => this.setItems(a => { a.splice(idx, 1); return a; })
+      };
+    });
+    const used = s.items.map(i => i.pid);
+    const available = Object.keys(P).filter(k => used.indexOf(k) < 0).map(k => ({
+      name: P[k].name,
+      add: () => this.setState({ items: s.items.concat([{ pid: k, qty: P[k].unit === 'g' ? 100 : 1, recipe: 0 }]) })
+    }));
+    const pill = on => 'min-height:48px;padding:0 18px;border-radius:16px;font-size:15px;font-weight:700;' +
+      (on ? 'background:#14213D;color:#FFFFFF;border:2px solid #14213D' : 'background:#FFFFFF;color:#14213D;border:2px solid #DCE2EE');
+    const dateOpts = [{ id: 'hoy', label: 'Hoy', sub: 'Dom 11 oct' }, { id: 'ayer', label: 'Ayer', sub: 'Sáb 10 oct' }, { id: 'otra', label: 'Otra fecha', sub: 'Otra fecha' }];
+    const dates = dateOpts.map(d => ({ label: d.label, on: s.date === d.id ? 'true' : 'false', style: pill(s.date === d.id), pick: () => this.setState({ date: d.id }) }));
+    const dishes = this.D.map(d => ({ name: d.name, on: s.dish === d.id ? 'true' : 'false', style: pill(s.dish === d.id) + ';min-height:52px', pick: () => this.setState(this.load(d.id)) }));
+    return {
+      dates, dishes, items, available,
+      reset: () => this.setState(this.load(s.dish)),
+      byUnits, made: s.made,
+      madeTitle: byUnits ? dish.count.charAt(0).toUpperCase() + dish.count.slice(1) + ' que han salido' : 'Raciones que han salido',
+      madeSub: byUnits ? 'La receta da ' + dish.made + ' · van ' + dish.per + ' por ración' : 'La receta da ' + dish.made,
+      portionsLabel: fnum(portions) + (portions === 1 ? ' ración' : ' raciones'),
+      portionsNum: fnum(portions),
+      unitSingular: dish.one || 'unidad',
+      perUnit: eur(s.made > 0 ? total / s.made : 0),
+      incMade: () => this.setState({ made: s.made + 1 }),
+      decMade: () => this.setState({ made: Math.max(1, s.made - 1) }),
+      total: eur(total), perPortion: eur(per), charge: eur(charge),
+      dishName: dish.name, dateSub: (dateOpts.find(d => d.id === s.date) || dateOpts[0]).sub
+    };
+  }
+}
+</script>
+</body>
+</html>

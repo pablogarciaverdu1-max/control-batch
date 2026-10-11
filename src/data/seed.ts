@@ -66,3 +66,19 @@ export function datosIniciales(hoy: string, ahora: number): DatosIniciales {
   }));
   return { productos, precios, platos, ajustes: { id: ID_AJUSTES, redondeo: 0.1, updatedAt: ahora } };
 }
+
+const ORDEN_INICIAL = new Map<string, number>([
+  ...PRODUCTOS.map(([id], i): [string, number] => ['p-' + id, i]),
+  ...PLATOS.map(([id], i): [string, number] => ['pl-' + id, i]),
+]);
+
+/**
+ * Clave para ordenar productos y platos por antigüedad: primero los iniciales
+ * en su orden y después los nuevos por su hora de creación (va en el id).
+ */
+export function claveOrden(id: string): number {
+  const i = ORDEN_INICIAL.get(id);
+  if (i !== undefined) return i;
+  const t = parseInt(id.split('-')[1] ?? '', 36);
+  return Number.isFinite(t) ? t : Number.MAX_SAFE_INTEGER;
+}

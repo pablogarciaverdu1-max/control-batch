@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Ajustes</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;family=Figtree:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#14213D;background:#EEF1F8}
+a{color:#14213D;text-decoration:none}a:hover{color:#0b1426}
+.num{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:-0.02em}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+input:focus{outline:3px solid #FF9F1C;outline-offset:1px}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; background: #EEF1F8; display: flex; flex-direction: column; overflow: hidden; font-family: 'Figtree', system-ui, sans-serif; color: #14213D">
+  <header style="display: flex; align-items: center; gap: 12px; padding: 20px 16px 8px">
+    <a href="Main.dc.html" aria-label="Volver a Inicio" style="width: 52px; height: 52px; border-radius: 16px; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+    </a>
+    <h1 class="num" style="margin: 0; font-size: 30px; font-weight: 800">Ajustes</h1>
+  </header>
+
+  <main style="flex: 1; overflow-y: auto; padding: 12px 20px 28px; display: flex; flex-direction: column; gap: 18px">
+    <section style="background: #FFFFFF; border-radius: 22px; padding: 18px; display: flex; flex-direction: column; gap: 14px">
+      <div style="display: flex; flex-direction: column; gap: 4px">
+        <h2 style="margin: 0; font-size: 18px; font-weight: 700">Redondeo del precio a cobrar</h2>
+        <span style="font-size: 14px; font-weight: 500; color: #4A5672">Siempre hacia arriba, para no perder dinero.</span>
+      </div>
+      <div role="group" aria-label="Redondeo" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+        <sc-for list="{{rounds}}" as="r" hint-placeholder-count="3">
+          <button type="button" onClick="{{r.pick}}" aria-pressed="{{r.on}}" class="num" style="{{r.style}}">{{r.label}}</button>
+        </sc-for>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; background: #EEF1F8; border-radius: 14px; padding: 12px 14px; gap: 10px">
+        <span style="font-size: 14px; font-weight: 600; color: #4A5672">Pollo al curry: 1,02 € por ración</span>
+        <span style="display: flex; align-items: baseline; gap: 6px; flex-shrink: 0">
+          <span style="font-size: 14px; font-weight: 600; color: #4A5672">cobras</span>
+          <span class="num" style="font-size: 24px; font-weight: 800">{{example}}</span>
+        </span>
+      </div>
+    </section>
+
+    <section style="background: #FFFFFF; border-radius: 22px; padding: 6px 18px; display: flex; flex-direction: column">
+      <div style="display: flex; align-items: center; gap: 14px; min-height: 72px; border-bottom: 1px solid #EEF1F8">
+        <span style="width: 40px; height: 40px; border-radius: 12px; background: #E6F1E9; color: #1D5A31; display: flex; align-items: center; justify-content: center; flex-shrink: 0">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18a5 5 0 1 1 .9-9.9A6 6 0 0 1 19 10a4 4 0 0 1-1 8z"/><path d="M9.5 13.5l2 2 3.5-4"/></svg>
+        </span>
+        <span style="display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 16px; font-weight: 700">Tus datos están en la nube</span>
+          <span style="font-size: 14px; font-weight: 500; color: #4A5672">Los ves igual en el móvil y en el ordenador</span>
+        </span>
+      </div>
+      <button type="button" style="display: flex; align-items: center; gap: 14px; min-height: 72px; border: none; background: transparent; padding: 0; text-align: left">
+        <span style="width: 40px; height: 40px; border-radius: 12px; background: #EEF1F8; display: flex; align-items: center; justify-content: center; flex-shrink: 0">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>
+        </span>
+        <span style="display: flex; flex-direction: column; gap: 2px; flex: 1">
+          <span style="font-size: 16px; font-weight: 700">Descargar una copia de mis datos</span>
+          <span style="font-size: 14px; font-weight: 500; color: #4A5672">Compras, platos y producciones en un archivo</span>
+        </span>
+      </button>
+    </section>
+
+    <section style="background: #FFFFFF; border-radius: 22px; padding: 6px 18px; display: flex; flex-direction: column">
+      <button type="button" onClick="{{toggleKey}}" aria-expanded="{{keyOpenStr}}" style="display: flex; align-items: center; gap: 14px; min-height: 72px; border: none; background: transparent; padding: 0; text-align: left">
+        <span style="width: 40px; height: 40px; border-radius: 12px; background: #EEF1F8; display: flex; align-items: center; justify-content: center; flex-shrink: 0">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3M14 9l2 2"/></svg>
+        </span>
+        <span style="font-size: 16px; font-weight: 700; flex: 1">Cambiar la clave</span>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4A5672" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{chevron}}"><path d="m9 18 6-6-6-6"/></svg>
+      </button>
+      <sc-if value="{{keyOpen}}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; gap: 10px; padding: 0 0 16px">
+          <label style="display: flex; flex-direction: column; gap: 6px">
+            <span style="font-size: 14px; font-weight: 700">Clave actual</span>
+            <input type="password" autocomplete="current-password" style="height: 52px; border-radius: 14px; border: 2px solid #DCE2EE; padding: 0 14px; font-size: 18px; box-sizing: border-box">
+          </label>
+          <label style="display: flex; flex-direction: column; gap: 6px">
+            <span style="font-size: 14px; font-weight: 700">Clave nueva</span>
+            <input type="password" autocomplete="new-password" style="height: 52px; border-radius: 14px; border: 2px solid #DCE2EE; padding: 0 14px; font-size: 18px; box-sizing: border-box">
+          </label>
+          <button type="button" onClick="{{toggleKey}}" style="height: 54px; border-radius: 16px; border: none; background: #14213D; color: #FFFFFF; font-size: 16px; font-weight: 800">Guardar clave nueva</button>
+          <span style="font-size: 13px; font-weight: 500; color: #4A5672">Los demás dispositivos te pedirán la clave nueva.</span>
+        </div>
+      </sc-if>
+    </section>
+
+    <a href="Acceso.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 16px; border-radius: 20px; border: 2px solid #DCE2EE; background: #FFFFFF; text-align: center">
+      <span style="font-size: 17px; font-weight: 800; color: #9A4A00">Cerrar sesión en este dispositivo</span>
+      <span style="font-size: 13px; font-weight: 500; color: #4A5672">Tus datos no se borran. Te pedirá la clave al volver.</span>
+    </a>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { round: '0,10', keyOpen: false };
+  }
+  renderVals() {
+    const s = this.state;
+    const ex = { '0,05': '1,05 €', '0,10': '1,10 €', '0,50': '1,50 €' };
+    const rounds = ['0,05', '0,10', '0,50'].map(v => {
+      const on = s.round === v;
+      return { label: v + ' €', on: on ? 'true' : 'false', pick: () => this.setState({ round: v }),
+        style: 'height:56px;border-radius:16px;font-size:19px;font-weight:800;' +
+          (on ? 'background:#14213D;color:#FFFFFF;border:2px solid #14213D' : 'background:#FFFFFF;color:#14213D;border:2px solid #DCE2EE') };
+    });
+    return {
+      rounds, example: ex[s.round],
+      keyOpen: s.keyOpen, keyOpenStr: s.keyOpen ? 'true' : 'false',
+      toggleKey: () => this.setState({ keyOpen: !s.keyOpen }),
+      chevron: 'flex-shrink:0;transition:transform .15s;transform:rotate(' + (s.keyOpen ? '90deg' : '0deg') + ')'
+    };
+  }
+}
+</script>
+</body>
+</html>

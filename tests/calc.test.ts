@@ -81,3 +81,14 @@ describe('producciones', () => {
     expect(prod.ingredientes.find((i) => i.productoId === 'p-tomate')!.nombreProducto).toBe('Tomate triturado');
   });
 });
+
+describe('orden por antigüedad', async () => {
+  const { claveOrden } = await import('../src/data/seed');
+  const { nuevoId } = await import('../src/data/operaciones');
+  it('los iniciales van en su orden y los nuevos detrás, por hora', () => {
+    expect(claveOrden('pl-pollo-curry')).toBeLessThan(claveOrden('pl-albondigas'));
+    const a = nuevoId('pl');
+    expect(claveOrden(a)).toBeGreaterThan(claveOrden('pl-pollo-horno'));
+    expect(claveOrden(a)).toBeLessThanOrEqual(Date.now());
+  });
+});

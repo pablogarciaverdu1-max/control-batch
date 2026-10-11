@@ -49,11 +49,12 @@ export function vivos(d: Datos): Datos {
   };
 }
 
+/** Id nuevo que empieza por la hora de creación, para poder ordenar por antigüedad. */
 export function nuevoId(prefijo: string): string {
   const r = typeof crypto !== 'undefined' && 'randomUUID' in crypto
-    ? crypto.randomUUID()
-    : Math.random().toString(36).slice(2) + Date.now().toString(36);
-  return prefijo + '-' + r;
+    ? crypto.randomUUID().slice(0, 8)
+    : Math.random().toString(36).slice(2, 10);
+  return prefijo + '-' + Date.now().toString(36).padStart(9, '0') + '-' + r;
 }
 
 /** Cada cambio de precio crea una entrada nueva en el historial. */

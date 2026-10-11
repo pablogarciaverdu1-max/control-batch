@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Historial</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;family=Figtree:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#14213D;background:#EEF1F8}
+a{color:#14213D;text-decoration:none}a:hover{color:#0b1426}
+.num{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:-0.02em}
+button{font:inherit;color:inherit;cursor:pointer}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; background: #EEF1F8; display: flex; flex-direction: column; overflow: hidden; font-family: 'Figtree', system-ui, sans-serif; color: #14213D">
+  <header style="padding: 28px 0 10px; display: flex; flex-direction: column; gap: 14px">
+    <h1 class="num" style="margin: 0; padding: 0 20px; font-size: 34px; font-weight: 800">Historial</h1>
+    <div role="group" aria-label="Elegir plato" style="display: flex; gap: 8px; overflow-x: auto; padding: 0 20px 4px">
+      <sc-for list="{{chips}}" as="c" hint-placeholder-count="5">
+        <button type="button" onClick="{{c.pick}}" aria-pressed="{{c.on}}" style="{{c.style}}">{{c.label}}</button>
+      </sc-for>
+    </div>
+  </header>
+
+  <main style="flex: 1; overflow-y: auto; padding: 6px 20px 24px; display: flex; flex-direction: column; gap: 14px">
+    <section style="background: #14213D; color: #FFFFFF; border-radius: 24px; padding: 20px; display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 12px">
+        <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+          <span style="font-size: 14px; font-weight: 600; color: #C9D1E4">{{dishName}}</span>
+          <span style="font-size: 13px; font-weight: 500; color: #C9D1E4">Coste por ración, última vez</span>
+          <span class="num" style="font-size: 48px; font-weight: 800; line-height: 1; color: #FF9F1C">{{last}}</span>
+        </span>
+        <span style="{{trendStyle}}">{{trend}}</span>
+      </div>
+      <sc-if value="{{hasMany}}" hint-placeholder-val="{{ false }}">
+        <div aria-hidden="true" style="display: flex; align-items: flex-end; gap: 10px; height: 110px">
+          <sc-for list="{{bars}}" as="b" hint-placeholder-count="4">
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 6px; height: 100%">
+              <span class="num" style="font-size: 13px; font-weight: 700">{{b.value}}</span>
+              <div style="{{b.style}}"></div>
+              <span style="font-size: 12px; font-weight: 600; color: #C9D1E4">{{b.label}}</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{hasOne}}" hint-placeholder-val="{{ true }}">
+        <p style="margin: 0; font-size: 14px; line-height: 1.45; font-weight: 500; color: #C9D1E4">La próxima vez que lo cocines verás aquí cómo cambia el coste de una vez a otra.</p>
+      </sc-if>
+    </section>
+
+    <h2 style="margin: 4px 0 0; font-size: 18px; font-weight: 700">{{countLabel}}</h2>
+    <sc-for list="{{rows}}" as="r" hint-placeholder-count="1">
+      <a href="ProduccionDetalle.dc.html" style="background: #FFFFFF; border-radius: 20px; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px">
+        <div style="display: flex; justify-content: space-between; align-items: baseline">
+          <span style="font-size: 17px; font-weight: 700">{{r.date}}</span>
+          <span style="display: flex; align-items: baseline; gap: 4px">
+            <span class="num" style="font-size: 26px; font-weight: 800">{{r.charge}}</span>
+            <span style="font-size: 13px; font-weight: 600; color: #4A5672">cobrado</span>
+          </span>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap">
+          <span style="background: #EEF1F8; border-radius: 10px; padding: 6px 10px; font-size: 14px; font-weight: 600">Lote {{r.total}}</span>
+          <span style="background: #EEF1F8; border-radius: 10px; padding: 6px 10px; font-size: 14px; font-weight: 600">{{r.made}}</span>
+          <span style="background: #EEF1F8; border-radius: 10px; padding: 6px 10px; font-size: 14px; font-weight: 600">{{r.per}}/ración</span>
+          <sc-if value="{{r.hasUnit}}" hint-placeholder-val="{{ false }}">
+            <span style="background: #FFE8C7; color: #7A3E00; border-radius: 10px; padding: 6px 10px; font-size: 14px; font-weight: 700">{{r.unit}}</span>
+          </sc-if>
+        </div>
+        <span style="display: flex; align-items: center; gap: 4px; font-size: 14px; font-weight: 700; color: #4A5672">Ver detalle, corregir o borrar
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </span>
+      </a>
+    </sc-for>
+  </main>
+
+  <nav aria-label="Navegación principal" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: #FFFFFF; border-top: 1px solid #DCE2EE; padding: 8px 8px 22px">
+    <a href="Main.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 0; min-height: 56px; box-sizing: border-box; color: #4A5672; font-size: 13px; font-weight: 600">
+      <span style="padding: 4px 16px; display: flex"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span>Inicio
+    </a>
+    <a href="Compras.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 0; min-height: 56px; box-sizing: border-box; color: #4A5672; font-size: 13px; font-weight: 600">
+      <span style="padding: 4px 16px; display: flex"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.4 11.2a1 1 0 0 0 1 .8h9.7a1 1 0 0 0 1-.8L21 7H6"/></svg></span>Compras
+    </a>
+    <a href="Platos.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 0; min-height: 56px; box-sizing: border-box; color: #4A5672; font-size: 13px; font-weight: 600">
+      <span style="padding: 4px 16px; display: flex"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10h16v7a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z"/><path d="M2 10h20"/><path d="M9 6c0-1 1-1 1-2M14 6c0-1 1-1 1-2"/></svg></span>Platos
+    </a>
+    <a href="Historial.dc.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 0; min-height: 56px; box-sizing: border-box; color: #14213D; font-size: 13px; font-weight: 700">
+      <span style="background: #FF9F1C; border-radius: 14px; padding: 4px 16px; display: flex"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>Historial
+    </a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { dish: 'curry' };
+    // Producciones reales: [fecha, etiqueta, lote, unidades que salen, por ración, qué se cuenta, singular]
+    this.H = {
+      curry: { name: 'Pollo al curry', short: 'Curry', list: [['[fecha]', '', 4.09, 4, 1, 'raciones']] },
+      albondigas: { name: 'Albóndigas en salsa con guisantes', short: 'Albóndigas', list: [['[fecha]', '', 9.94, 30, 5, 'albóndigas', 'albóndiga']] },
+      garbanzos: { name: 'Guiso de garbanzos con pollo', short: 'Garbanzos', list: [['[fecha]', '', 11.64, 4, 1, 'raciones']] },
+      arroz: { name: 'Arroz con pollo y verduras', short: 'Arroz', list: [['[fecha]', '', 2.48, 4, 1, 'raciones']] },
+      horno: { name: 'Pollo al horno con patatas', short: 'Al horno', list: [['[fecha]', '', 5.75, 4, 1, 'raciones']] }
+    };
+  }
+  renderVals() {
+    const eur = n => (Math.round(n * 100 + 1e-6) / 100).toFixed(2).replace('.', ',') + ' €';
+    const h = this.H[this.state.dish];
+    const per = h.list.map(x => x[2] / (x[3] / x[4]));
+    const max = Math.max.apply(null, per), min = Math.min.apply(null, per);
+    const bars = h.list.map((x, i) => ({
+      label: x[1], value: eur(per[i]).replace(' €', ''),
+      style: 'width:100%;max-width:48px;border-radius:10px 10px 4px 4px;background:' + (i === h.list.length - 1 ? '#FF9F1C' : 'rgba(255,255,255,0.28)') +
+        ';height:' + Math.round(max === min ? 56 : 24 + (per[i] - min) / (max - min) * 44) + 'px'
+    }));
+    const rows = h.list.slice().reverse().map((x, i) => {
+      const p = x[2] / (x[3] / x[4]);
+      const byUnits = x[5] !== 'raciones';
+      return {
+        date: x[0], total: eur(x[2]), per: eur(p),
+        made: byUnits ? x[3] + ' ' + x[5] + ' · ' + (x[3] / x[4]) + ' raciones' : x[3] + ' raciones',
+        hasUnit: byUnits, unit: byUnits ? eur(x[2] / x[3]) + ' por ' + x[6] : '',
+        charge: eur(Math.ceil(p * 10 - 1e-9) / 10)
+      };
+    });
+    let trend = 'Primera vez', trendStyle = 'background:rgba(255,255,255,0.12);border-radius:12px;padding:8px 12px;font-size:14px;font-weight:700;flex-shrink:0';
+    if (per.length > 1) {
+      const d = per[per.length - 1] - per[per.length - 2];
+      trend = (d >= 0 ? '+' : '−') + Math.abs(d).toFixed(2).replace('.', ',') + ' € vs. anterior';
+      trendStyle = 'border-radius:12px;padding:8px 12px;font-size:14px;font-weight:700;flex-shrink:0;' +
+        (d > 0 ? 'background:#FF9F1C;color:#14213D' : 'background:#CFEAD8;color:#14213D');
+    }
+    const chips = Object.keys(this.H).map(k => {
+      const on = this.state.dish === k;
+      return { label: this.H[k].short, on: on ? 'true' : 'false', pick: () => this.setState({ dish: k }),
+        style: 'height:44px;padding:0 16px;border-radius:22px;font-size:15px;font-weight:700;white-space:nowrap;flex-shrink:0;' +
+          (on ? 'background:#14213D;color:#FFFFFF;border:2px solid #14213D' : 'background:#FFFFFF;color:#14213D;border:2px solid #DCE2EE') };
+    });
+    return {
+      chips, bars, rows, trend, trendStyle,
+      hasMany: per.length > 1, hasOne: per.length <= 1,
+      dishName: h.name, last: eur(per[per.length - 1]),
+      countLabel: h.list.length === 1 ? '1 producción' : h.list.length + ' producciones'
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Ficha de producto</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;family=Figtree:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#14213D;background:#EEF1F8}
+a{color:#14213D;text-decoration:none}a:hover{color:#0b1426}
+.num{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:-0.02em}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+button:disabled{cursor:not-allowed}
+input:focus{outline:3px solid #FF9F1C;outline-offset:1px}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; background: #EEF1F8; display: flex; flex-direction: column; overflow: hidden; position: relative; font-family: 'Figtree', system-ui, sans-serif; color: #14213D">
+  <header style="display: flex; align-items: center; justify-content: space-between; padding: 20px 16px 8px">
+    <a href="Compras.dc.html" aria-label="Volver a Compras" style="width: 52px; height: 52px; border-radius: 16px; background: #FFFFFF; display: flex; align-items: center; justify-content: center">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+    </a>
+    <div style="display: flex; gap: 8px">
+      <a href="ProductoForm.dc.html" style="height: 52px; padding: 0 16px; border-radius: 16px; background: #FFFFFF; display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M14 6l4 4"/></svg>
+        Editar
+      </a>
+      <button type="button" onClick="{{askDelete}}" style="height: 52px; padding: 0 16px; border-radius: 16px; border: none; background: #FFFFFF; color: #A1281E; display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>
+        Borrar
+      </button>
+    </div>
+  </header>
+
+  <main style="flex: 1; overflow-y: auto; padding: 8px 20px 24px; display: flex; flex-direction: column; gap: 18px">
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <span style="align-self: flex-start; background: #E6F1E9; color: #1D5A31; border-radius: 8px; padding: 3px 10px; font-size: 13px; font-weight: 700">{{shop}}</span>
+      <h1 class="num" style="margin: 0; font-size: 30px; font-weight: 800; line-height: 1.1">{{pname}}</h1>
+    </div>
+
+    <section style="background: #14213D; color: #FFFFFF; border-radius: 24px; padding: 22px; display: flex; flex-direction: column; gap: 18px">
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 14px; font-weight: 600; color: #C9D1E4">Precio actual del envase · {{content}}</span>
+        <span class="num" style="font-size: 52px; font-weight: 800; line-height: 1">{{current}}</span>
+      </div>
+      <div style="display: flex; gap: 10px">
+        <div style="flex: 1; background: rgba(255,255,255,0.08); border-radius: 16px; padding: 12px 14px; display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 13px; font-weight: 600; color: #C9D1E4">{{bigLabel}}</span>
+          <span class="num" style="font-size: 22px; font-weight: 800; color: #FF9F1C">{{bigUnit}}</span>
+        </div>
+        <div style="flex: 1; background: rgba(255,255,255,0.08); border-radius: 16px; padding: 12px 14px; display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 13px; font-weight: 600; color: #C9D1E4">{{smallLabel}}</span>
+          <span class="num" style="font-size: 22px; font-weight: 800; color: #FF9F1C">{{smallUnit}}</span>
+        </div>
+      </div>
+    </section>
+
+    <section style="background: #FFFFFF; border-radius: 24px; padding: 18px 18px 8px; display: flex; flex-direction: column; gap: 4px">
+      <h2 style="margin: 0 0 4px; font-size: 18px; font-weight: 700">Historial de precios</h2>
+      <sc-for list="{{history}}" as="h" hint-placeholder-count="1">
+        <div style="border-bottom: 1px solid #EEF1F8; padding: 8px 0">
+          <sc-if value="{{h.notEditing}}" hint-placeholder-val="{{ true }}">
+            <div style="display: flex; align-items: center; gap: 6px">
+              <span style="display: flex; flex-direction: column; gap: 2px; flex: 1">
+                <span style="font-size: 16px; font-weight: 600">{{h.date}}</span>
+                <span style="font-size: 13px; font-weight: 500; color: #4A5672">{{h.note}}</span>
+              </span>
+              <span class="num" style="font-size: 20px; font-weight: 800; margin-right: 4px">{{h.price}}</span>
+              <button type="button" onClick="{{h.edit}}" aria-label="Editar este precio" style="width: 44px; height: 44px; border-radius: 12px; border: none; background: #EEF1F8; display: flex; align-items: center; justify-content: center">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M14 6l4 4"/></svg>
+              </button>
+              <button type="button" onClick="{{h.remove}}" disabled="{{h.only}}" aria-label="Borrar este precio" style="{{h.delStyle}}">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>
+              </button>
+            </div>
+          </sc-if>
+          <sc-if value="{{h.editing}}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; flex-direction: column; gap: 10px; padding: 4px 0 8px">
+              <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+                <label style="display: flex; flex-direction: column; gap: 6px">
+                  <span style="font-size: 14px; font-weight: 700">Precio</span>
+                  <span style="display: flex; align-items: center; height: 54px; border-radius: 14px; border: 3px solid #FF9F1C; padding: 0 12px; box-sizing: border-box">
+                    <input type="text" inputmode="decimal" value="{{draftPrice}}" onChange="{{onDraftPrice}}" class="num" style="flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-size: 22px; font-weight: 800">
+                    <span class="num" style="font-size: 20px; font-weight: 800; color: #4A5672">€</span>
+                  </span>
+                </label>
+                <label style="display: flex; flex-direction: column; gap: 6px">
+                  <span style="font-size: 14px; font-weight: 700">Fecha</span>
+                  <input type="date" value="{{draftDate}}" onChange="{{onDraftDate}}" style="height: 54px; border-radius: 14px; border: 2px solid #DCE2EE; padding: 0 10px; font-size: 15px; font-weight: 600; box-sizing: border-box; min-width: 0">
+                </label>
+              </div>
+              <div style="display: flex; gap: 8px">
+                <button type="button" onClick="{{cancelEdit}}" style="flex: 1; height: 50px; border-radius: 14px; border: 2px solid #DCE2EE; background: #FFFFFF; font-size: 15px; font-weight: 700">Cancelar</button>
+                <button type="button" onClick="{{saveEdit}}" style="flex: 2; height: 50px; border-radius: 14px; border: none; background: #14213D; color: #FFFFFF; font-size: 15px; font-weight: 800">Guardar cambios</button>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </sc-for>
+      <sc-if value="{{single}}" hint-placeholder-val="{{ true }}">
+        <p style="margin: 6px 0 8px; font-size: 13px; line-height: 1.45; font-weight: 500; color: #4A5672">Es el único precio, así que no se puede borrar: cámbialo con el lápiz. Cuando registres más compras verás aquí cómo cambia.</p>
+      </sc-if>
+    </section>
+
+    <section style="display: flex; flex-direction: column; gap: 8px">
+      <h2 style="margin: 0; font-size: 18px; font-weight: 700">Lo usas en</h2>
+      <sc-for list="{{uses}}" as="u" hint-placeholder-count="2">
+        <a href="Plato.dc.html" style="display: flex; justify-content: space-between; align-items: center; gap: 10px; background: #FFFFFF; border-radius: 18px; padding: 14px 16px; min-height: 60px; box-sizing: border-box">
+          <span style="font-size: 16px; font-weight: 600">{{u.dish}}</span>
+          <span style="font-size: 14px; font-weight: 600; color: #4A5672; white-space: nowrap">{{u.detail}}</span>
+        </a>
+      </sc-for>
+      <sc-if value="{{unused}}" hint-placeholder-val="{{ false }}">
+        <span style="background: #FFFFFF; border-radius: 18px; padding: 16px; font-size: 15px; font-weight: 500; color: #4A5672">Todavía no lo usa ningún plato.</span>
+      </sc-if>
+    </section>
+  </main>
+
+  <div style="padding: 12px 20px 28px; background: #EEF1F8">
+    <button type="button" onClick="{{openSheet}}" style="width: 100%; height: 64px; border: none; border-radius: 20px; background: #FF9F1C; color: #14213D; font-size: 19px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 8px 20px rgba(255,159,28,0.35)">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+      Registrar compra
+    </button>
+  </div>
+
+  <!-- Hoja: registrar compra -->
+  <sc-if value="{{sheetOpen}}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; inset: 0; background: rgba(20,33,61,0.55); display: flex; flex-direction: column; justify-content: flex-end">
+      <div role="dialog" aria-label="Registrar compra" style="background: #FFFFFF; border-radius: 28px 28px 0 0; padding: 24px 20px 32px; display: flex; flex-direction: column; gap: 20px">
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <h2 class="num" style="margin: 0; font-size: 24px; font-weight: 800">Registrar compra</h2>
+          <span style="font-size: 15px; font-weight: 500; color: #4A5672">{{pname}} · {{shop}} · hoy</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <span style="font-size: 15px; font-weight: 700">Precio que has pagado</span>
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; background: #EEF1F8; border-radius: 22px; padding: 10px">
+            <button type="button" onClick="{{dec}}" aria-label="Bajar 1 céntimo" style="width: 64px; height: 64px; border-radius: 18px; border: none; background: #FFFFFF; display: flex; align-items: center; justify-content: center">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg>
+            </button>
+            <span class="num" style="font-size: 40px; font-weight: 800; border-bottom: 2px dashed #9AA6C0">{{buyLabel}}</span>
+            <button type="button" onClick="{{inc}}" aria-label="Subir 1 céntimo" style="width: 64px; height: 64px; border-radius: 18px; border: none; background: #14213D; color: #FFFFFF; display: flex; align-items: center; justify-content: center">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+          </div>
+          <span style="font-size: 14px; font-weight: 600; color: #4A5672">Envase de {{content}} · toca el precio para escribirlo</span>
+        </div>
+        <div style="display: flex; gap: 10px">
+          <button type="button" onClick="{{closeSheet}}" style="flex: 1; height: 60px; border-radius: 18px; border: 2px solid #DCE2EE; background: #FFFFFF; font-size: 17px; font-weight: 700">Cancelar</button>
+          <button type="button" onClick="{{saveBuy}}" style="flex: 2; height: 60px; border-radius: 18px; border: none; background: #FF9F1C; color: #14213D; font-size: 17px; font-weight: 800">Guardar precio</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- Confirmación: borrar producto -->
+  <sc-if value="{{confirmOpen}}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; inset: 0; background: rgba(20,33,61,0.55); display: flex; flex-direction: column; justify-content: flex-end">
+      <div role="alertdialog" aria-label="Borrar producto" style="background: #FFFFFF; border-radius: 28px 28px 0 0; padding: 24px 20px 32px; display: flex; flex-direction: column; gap: 16px">
+        <span style="width: 52px; height: 52px; border-radius: 16px; background: #FBE4E1; color: #A1281E; display: flex; align-items: center; justify-content: center">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>
+        </span>
+        <h2 class="num" style="margin: 0; font-size: 24px; font-weight: 800; line-height: 1.15">¿Borrar {{pname}}?</h2>
+        <sc-if value="{{unused}}" hint-placeholder-val="{{ false }}">
+          <p style="margin: 0; font-size: 16px; line-height: 1.45; font-weight: 500; color: #4A5672">No lo usa ningún plato. Se borrará junto con su historial de precios.</p>
+        </sc-if>
+        <sc-if value="{{used}}" hint-placeholder-val="{{ true }}">
+          <p style="margin: 0; font-size: 16px; line-height: 1.45; font-weight: 500; color: #4A5672">Lo usas en {{usesCount}}. Si lo borras, <strong style="color: #14213D">se quitará de sus ingredientes</strong> y su coste bajará:</p>
+          <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px">
+            <sc-for list="{{uses}}" as="u" hint-placeholder-count="2">
+              <li style="display: flex; justify-content: space-between; gap: 10px; background: #FFE8C7; border-radius: 12px; padding: 12px 14px; font-size: 15px; font-weight: 700">
+                <span>{{u.dish}}</span>
+                <span style="font-weight: 600; color: #5C2E00; white-space: nowrap">− {{u.cost}}</span>
+              </li>
+            </sc-for>
+          </ul>
+          <p style="margin: 0; font-size: 14px; font-weight: 500; color: #4A5672">Tus producciones guardadas no cambian.</p>
+        </sc-if>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 4px">
+          <button type="button" onClick="{{confirmDelete}}" style="height: 60px; border-radius: 18px; border: none; background: #A1281E; color: #FFFFFF; font-size: 17px; font-weight: 800">{{deleteLabel}}</button>
+          <button type="button" onClick="{{closeConfirm}}" style="height: 56px; border-radius: 18px; border: 2px solid #DCE2EE; background: #FFFFFF; font-size: 17px; font-weight: 700">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- Aviso con Deshacer -->
+  <sc-if value="{{undoOn}}" hint-placeholder-val="{{ false }}">
+    <div role="status" style="position: absolute; left: 16px; right: 16px; bottom: 108px; overflow: hidden; background: #14213D; color: #FFFFFF; border-radius: 18px; padding: 10px 10px 14px 18px; display: flex; align-items: center; gap: 12px; box-shadow: 0 12px 30px rgba(20,33,61,0.30)">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C9D1E4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>
+      <span style="flex: 1; font-size: 15px; font-weight: 700">{{undoMsg}}</span>
+      <button type="button" onClick="{{undo}}" style="height: 44px; padding: 0 16px; border: none; border-radius: 12px; background: #FF9F1C; color: #14213D; font-size: 15px; font-weight: 800; display: flex; align-items: center; gap: 6px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg>
+        Deshacer
+      </button>
+      <span aria-hidden="true" style="position: absolute; left: 0; bottom: 0; height: 4px; width: 70%; background: #FF9F1C"></span>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"producto":{"editor":"enum","options":["contramuslos","caldo"],"default":"contramuslos"},"dialogo":{"editor":"enum","options":["ninguno","borrar"],"default":"ninguno"},"editarHistorial":{"editor":"boolean","default":false},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.PR = {
+      contramuslos: { name: 'Contramuslos de pollo deshuesados', shop: 'Mercadona', content: 550, unit: 'g', price: 3.74,
+        uses: [['Pollo al curry', 300], ['Arroz con pollo y verduras', 150]] },
+      caldo: { name: 'Caldo de pollo', shop: 'Mercadona', content: 1000, unit: 'ml', price: 0.75, uses: [] }
+    };
+    const pr = this.PR[props.producto ?? 'contramuslos'] || this.PR.contramuslos;
+    const edit = !!(props.editarHistorial ?? false);
+    this.state = {
+      history: [{ date: '[fecha]', iso: '', price: pr.price }],
+      editing: edit ? 0 : -1, draftPrice: pr.price.toFixed(2).replace('.', ','), draftDate: '',
+      sheet: false, buy: pr.price,
+      confirm: (props.dialogo ?? 'ninguno') === 'borrar',
+      undo: null
+    };
+  }
+  undoToast(msg, restore) {
+    this.setState({ undo: { msg, restore } });
+    clearTimeout(this.t); this.t = setTimeout(() => this.setState({ undo: null }), 6000);
+  }
+  renderVals() {
+    const s = this.state;
+    const pr = this.PR[this.props.producto ?? 'contramuslos'] || this.PR.contramuslos;
+    const eur = n => (Math.round(n * 100 + 1e-6) / 100).toFixed(2).replace('.', ',') + ' €';
+    const parse = v => { const n = parseFloat(String(v).replace(',', '.')); return isNaN(n) || n <= 0 ? null : n; };
+    const cur = s.history.length ? s.history[0].price : pr.price;
+    const ppu = cur / pr.content;
+    const isG = pr.unit === 'g';
+    const only = s.history.length <= 1;
+    const history = s.history.map((h, i) => ({
+      date: h.date, price: eur(h.price),
+      note: i === 0 ? 'Precio actual' : 'Precio anterior',
+      editing: s.editing === i, notEditing: s.editing !== i, only,
+      delStyle: 'width:44px;height:44px;border-radius:12px;border:none;display:flex;align-items:center;justify-content:center;' +
+        (only ? 'background:#F4F5F8;color:#B5BCCB' : 'background:#FBE4E1;color:#A1281E'),
+      edit: () => this.setState({ editing: i, draftPrice: h.price.toFixed(2).replace('.', ','), draftDate: h.iso }),
+      remove: () => {
+        if (only) return;
+        const prev = s.history;
+        this.setState({ history: s.history.filter((_, j) => j !== i), editing: -1 });
+        this.undoToast('Precio borrado del historial', () => this.setState({ history: prev }));
+      }
+    }));
+    const uses = pr.uses.map(([dish, q]) => ({ dish, detail: q + ' ' + pr.unit + ' · ' + eur(q * ppu), cost: eur(q * ppu) }));
+    const n = pr.uses.length;
+    return {
+      pname: pr.name, shop: pr.shop, content: pr.content + ' ' + pr.unit,
+      current: eur(cur),
+      bigLabel: isG ? 'Por kilo' : 'Por litro', bigUnit: eur(ppu * 1000),
+      smallLabel: isG ? 'Por 100 g' : 'Por 100 ml', smallUnit: eur(ppu * 100),
+      history, single: only,
+      draftPrice: s.draftPrice, onDraftPrice: e => this.setState({ draftPrice: e.target.value }),
+      draftDate: s.draftDate, onDraftDate: e => this.setState({ draftDate: e.target.value }),
+      cancelEdit: () => this.setState({ editing: -1 }),
+      saveEdit: () => {
+        const v = parse(s.draftPrice); if (v === null) return;
+        const d = s.draftDate;
+        const label = d ? d.split('-').reverse().join('/') : s.history[s.editing].date;
+        this.setState({ editing: -1, history: s.history.map((h, j) => j === s.editing ? { date: label, iso: d, price: v } : h) });
+      },
+      uses, unused: n === 0, used: n > 0,
+      usesCount: n === 1 ? '1 plato' : n + ' platos',
+      deleteLabel: n === 0 ? 'Borrar producto' : 'Borrar y quitar de ' + (n === 1 ? '1 plato' : n + ' platos'),
+      askDelete: () => this.setState({ confirm: true }),
+      closeConfirm: () => this.setState({ confirm: false }),
+      confirmOpen: s.confirm,
+      confirmDelete: () => { this.setState({ confirm: false }); this.undoToast('Producto borrado', () => {}); },
+      sheetOpen: s.sheet,
+      openSheet: () => this.setState({ sheet: true, buy: cur }),
+      closeSheet: () => this.setState({ sheet: false }),
+      inc: () => this.setState({ buy: Math.round((s.buy + 0.01) * 100) / 100 }),
+      dec: () => this.setState({ buy: Math.max(0, Math.round((s.buy - 0.01) * 100) / 100) }),
+      buyLabel: eur(s.buy),
+      saveBuy: () => this.setState({ sheet: false, history: [{ date: 'Hoy, 11 oct 2026', iso: '2026-10-11', price: s.buy }].concat(s.history) }),
+      undoOn: !!s.undo, undoMsg: s.undo ? s.undo.msg : '',
+      undo: () => { if (s.undo) s.undo.restore(); this.setState({ undo: null }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

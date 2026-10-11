@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Avisos</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;family=Figtree:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#14213D;background:#EEF1F8}
+.num{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:-0.02em}
+button{font:inherit;color:inherit;cursor:pointer}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; background: #EEF1F8; box-sizing: border-box; padding: 28px 16px; display: flex; flex-direction: column; gap: 22px; font-family: 'Figtree', system-ui, sans-serif; color: #14213D">
+  <h1 class="num" style="margin: 0; padding: 0 4px; font-size: 30px; font-weight: 800">Avisos</h1>
+
+  <section style="display: flex; flex-direction: column; gap: 10px">
+    <h2 style="margin: 0; padding: 0 4px; font-size: 16px; font-weight: 700; color: #4A5672">Después de borrar · 6 segundos</h2>
+    <sc-for list="{{undo}}" as="t" hint-placeholder-count="4">
+      <div role="status" style="position: relative; overflow: hidden; background: #14213D; color: #FFFFFF; border-radius: 18px; padding: 10px 10px 14px 18px; display: flex; align-items: center; gap: 12px; box-shadow: 0 12px 30px rgba(20,33,61,0.30)">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C9D1E4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>
+        <span style="flex: 1; font-size: 15px; font-weight: 700">{{t.msg}}</span>
+        <button type="button" style="height: 44px; padding: 0 16px; border: none; border-radius: 12px; background: #FF9F1C; color: #14213D; font-size: 15px; font-weight: 800; display: flex; align-items: center; gap: 6px">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg>
+          Deshacer
+        </button>
+        <span aria-hidden="true" style="{{t.bar}}"></span>
+      </div>
+    </sc-for>
+  </section>
+
+  <section style="display: flex; flex-direction: column; gap: 10px">
+    <h2 style="margin: 0; padding: 0 4px; font-size: 16px; font-weight: 700; color: #4A5672">Después de guardar · 4 segundos</h2>
+    <sc-for list="{{ok}}" as="t" hint-placeholder-count="2">
+      <div role="status" style="background: #14213D; color: #FFFFFF; border-radius: 18px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 12px 30px rgba(20,33,61,0.30)">
+        <span style="width: 30px; height: 30px; border-radius: 50%; background: #2E8B57; display: flex; align-items: center; justify-content: center; flex-shrink: 0">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>
+        </span>
+        <span style="display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 15px; font-weight: 700">{{t.msg}}</span>
+          <span style="font-size: 14px; font-weight: 500; color: #C9D1E4">{{t.sub}}</span>
+        </span>
+      </div>
+    </sc-for>
+  </section>
+
+  <p style="margin: 0; padding: 0 4px; font-size: 14px; line-height: 1.45; font-weight: 500; color: #4A5672">Aparecen abajo, encima del menú. Un aviso nuevo sustituye al anterior.</p>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const bar = w => 'position:absolute;left:0;bottom:0;height:4px;background:#FF9F1C;width:' + w + '%';
+    return {
+      undo: [
+        { msg: 'Producto borrado', bar: bar(80) },
+        { msg: 'Plato borrado', bar: bar(60) },
+        { msg: 'Producción borrada', bar: bar(40) },
+        { msg: 'Precio borrado del historial', bar: bar(20) }
+      ],
+      ok: [
+        { msg: 'Precio actualizado', sub: 'Cambia el coste de 3 platos' },
+        { msg: 'Plato duplicado', sub: 'Se ha creado «Albóndigas en salsa con guisantes (copia)»' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
