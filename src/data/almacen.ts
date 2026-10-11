@@ -4,7 +4,7 @@
 import { useSyncExternalStore } from 'react';
 import { crearCatalogo, type Catalogo } from '../calc/calc';
 import { hoyIso } from '../calc/fechas';
-import { ErrorClave, ErrorRed, llamar, USA_SIMULADOR } from './api';
+import { ErrorClave, ErrorRed, ES_DEMO, llamar, USA_SIMULADOR } from './api';
 import { db, type EnCola } from './db';
 import { ID_AJUSTES, type Ajustes, type Registro } from './model';
 import { aplicar, vivos, type Cambios, type Datos } from './operaciones';
@@ -27,12 +27,15 @@ export interface Estado {
 }
 
 const CLAVE_LS = 'mi-cocina-clave';
+const SALIO_LS = 'mi-cocina-salio';
 const AJUSTES_DEF: Ajustes = { id: ID_AJUSTES, redondeo: 0.1, updatedAt: 0 };
 const VACIO: Datos = { productos: [], precios: [], platos: [], producciones: [], ajustes: AJUSTES_DEF };
 
 function leerClave(): string | null {
   try {
-    return localStorage.getItem(CLAVE_LS) ?? (USA_SIMULADOR ? '1234' : null);
+    // En `npm run dev` con el simulador se entra solo con la clave 1234 (salvo tras cerrar sesión)
+    const auto = USA_SIMULADOR && !ES_DEMO && !localStorage.getItem(SALIO_LS) ? '1234' : null;
+    return localStorage.getItem(CLAVE_LS) ?? auto;
   } catch {
     return null;
   }
@@ -131,8 +134,8 @@ class Almacen {
   }
 
   /** Envía la cola y trae los datos de la hoja. */
-  async sincronizar(): Promise<void> {
-    const clave = this.estado.clave;
+  async sincronizar(conClave?: string): Promise<void> {
+    const clave = conClave ?? this.estado.clave;
     if (!clave) return;
     if (this.enCurso) { this.repetir = true; return; }
     if (!navigator.onLine) { this.poner({ online: false, sync: 'sin conexión' }); return; }
@@ -154,7 +157,7 @@ class Almacen {
       await this.traer(clave);
       this.poner({ sync: (await db.cola.count()) ? 'guardando' : 'guardado', online: true });
     } catch (e) {
-      if (e instanceof ErrorClave) { await this.cerrarSesion(true); return; }
+      if (e instanceof ErrorClave) { this.olvidarClave(); return; }
       this.poner({ sync: 'sin conexión' });
       if (!(e instanceof ErrorRed)) console.error(e);
     } finally {
@@ -202,17 +205,42 @@ class Almacen {
     } catch (e) {
       return e instanceof ErrorClave ? 'clave' : 'red';
     }
-    try { localStorage.setItem(CLAVE_LS, clave); } catch { /* sin almacenamiento */ }
+    try { localStorage.setItem(CLAVE_LS, clave); localStorage.removeItem(SALIO_LS); } catch { /* sin almacenamiento */ }
+    await this.sincronizar(clave);
     this.poner({ clave, errorClave: false });
-    await this.sincronizar();
     return 'ok';
   }
 
-  /** Borra la clave y la copia local (no los datos de la hoja). */
-  async cerrarSesion(porError = false) {
+  /** La clave ya no vale (se cambió en otro dispositivo): se pide otra vez sin perder lo pendiente. */
+  olvidarClave() {
     try { localStorage.removeItem(CLAVE_LS); } catch { /* sin almacenamiento */ }
+    this.poner({ clave: null, errorClave: true });
+  }
+
+  /** Cambia la clave en el Apps Script. Los demás dispositivos tendrán que escribirla otra vez. */
+  async cambiarClave(nueva: string): Promise<'ok' | 'red' | 'error'> {
+    const clave = this.estado.clave;
+    if (!clave) return 'error';
+    try {
+      await llamar(clave, 'cambiarClave', { nueva });
+    } catch (e) {
+      return e instanceof ErrorRed ? 'red' : 'error';
+    }
+    try { localStorage.setItem(CLAVE_LS, nueva); } catch { /* sin almacenamiento */ }
+    this.poner({ clave: nueva });
+    return 'ok';
+  }
+
+  /** Cambios guardados en el dispositivo que todavía no se han subido. */
+  pendientes(): Promise<number> {
+    return db.cola.count();
+  }
+
+  /** Borra la clave y la copia local (no los datos de la hoja). */
+  async cerrarSesion() {
+    try { localStorage.removeItem(CLAVE_LS); localStorage.setItem(SALIO_LS, '1'); } catch { /* sin almacenamiento */ }
     await Promise.all([db.productos.clear(), db.precios.clear(), db.platos.clear(), db.producciones.clear(), db.ajustes.clear(), db.cola.clear(), db.meta.clear()]);
-    this.poner({ clave: null, errorClave: porError, sync: 'guardado', todo: VACIO });
+    this.poner({ clave: null, errorClave: false, sync: 'guardado', todo: VACIO });
   }
 
   async leerMeta<T>(k: string): Promise<T | undefined> {

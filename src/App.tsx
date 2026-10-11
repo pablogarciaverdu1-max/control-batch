@@ -1,7 +1,8 @@
 import { HashRouter, Route, Routes } from 'react-router-dom';
 import { useApp } from './data/almacen';
 import { Inicio } from './screens/Inicio';
-import { Pendiente } from './screens/Pendiente';
+import { Acceso } from './screens/Acceso';
+import { Ajustes } from './screens/Ajustes';
 import { Produccion } from './screens/produccion/Produccion';
 import { Compras } from './screens/compras/Compras';
 import { Producto } from './screens/compras/Producto';
@@ -14,8 +15,9 @@ import { Historial } from './screens/historial/Historial';
 import { ProduccionDetalle } from './screens/historial/ProduccionDetalle';
 
 export function App() {
-  const { listo } = useApp();
+  const { listo, clave } = useApp();
   if (!listo) return null;
+  if (!clave) return <Acceso />;
   return (
     <HashRouter>
       <Routes>
@@ -32,7 +34,7 @@ export function App() {
         <Route path="/plato/:id" element={<Plato />} />
         <Route path="/plato/:id/editar" element={<PlatoEditor key="editar" />} />
         <Route path="/historial" element={<Historial />} />
-        <Route path="/ajustes" element={<Pendiente titulo="Ajustes" fase="f" seccion="ajustes" />} />
+        <Route path="/ajustes" element={<Ajustes />} />
         <Route path="*" element={<Inicio />} />
       </Routes>
       <Avisos />
