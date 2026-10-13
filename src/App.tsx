@@ -16,7 +16,7 @@ import { ProduccionDetalle } from './screens/historial/ProduccionDetalle';
 
 export function App() {
   const { listo, clave } = useApp();
-  if (!listo) return null;
+  if (!listo) return <p style={{ margin: 0, padding: "48px 24px", fontSize: 16, color: "#4A5672" }}>Cargando Mi cocina…</p>;
   if (!clave) return <Acceso />;
   return (
     <HashRouter>

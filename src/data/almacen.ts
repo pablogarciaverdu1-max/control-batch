@@ -5,7 +5,8 @@ import { useSyncExternalStore } from 'react';
 import { crearCatalogo, type Catalogo } from '../calc/calc';
 import { hoyIso } from '../calc/fechas';
 import { ErrorClave, ErrorRed, ES_DEMO, llamar, USA_SIMULADOR } from './api';
-import { db, type EnCola } from './db';
+import type { EnCola } from './db';
+import { abrirLocal, type Local } from './local';
 import { ID_AJUSTES, type Ajustes, type Registro } from './model';
 import { aplicar, vivos, type Cambios, type Datos } from './operaciones';
 import { claveOrden, datosIniciales } from './seed';
@@ -71,11 +72,19 @@ class Almacen {
     return () => this.oyentes.delete(f);
   };
 
+  private local!: Local;
+
   async iniciar() {
-    const [productos, precios, platos, producciones, ajustes] = await Promise.all([
-      db.productos.toArray(), db.precios.toArray(), db.platos.toArray(), db.producciones.toArray(), db.ajustes.get(ID_AJUSTES),
-    ]);
-    this.poner({ listo: true, todo: { productos, precios, platos, producciones, ajustes: ajustes ?? AJUSTES_DEF } });
+    let ajustes: Ajustes | undefined;
+    try {
+      const r = await abrirLocal();
+      this.local = r.local;
+      ajustes = r.datos.ajustes;
+      this.poner({ listo: true, todo: { productos: r.datos.productos, precios: r.datos.precios, platos: r.datos.platos, producciones: r.datos.producciones, ajustes: ajustes ?? AJUSTES_DEF } });
+    } catch (e) {
+      console.error(e);
+      this.poner({ listo: true });
+    }
     window.addEventListener('online', () => { this.poner({ online: true }); this.sincronizar(); });
     window.addEventListener('offline', () => this.poner({ online: false, sync: 'sin conexión' }));
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') this.sincronizar(); });
@@ -111,19 +120,11 @@ class Almacen {
   async guardar(c: Cambios) {
     this.poner({ todo: aplicar(this.estado.todo, c) });
     const cola: EnCola[] = [];
-    await db.transaction('rw', [db.productos, db.precios, db.platos, db.producciones, db.ajustes, db.cola], async () => {
-      for (const tipo of ['productos', 'precios', 'platos', 'producciones'] as const) {
-        const lista = c[tipo] as Registro[] | undefined;
-        if (!lista?.length) continue;
-        await (db[tipo] as unknown as { bulkPut: (x: Registro[]) => Promise<unknown> }).bulkPut(lista);
-        lista.forEach((registro) => cola.push({ tipo, registro }));
-      }
-      if (c.ajustes) {
-        await db.ajustes.put(c.ajustes);
-        cola.push({ tipo: 'ajustes', registro: c.ajustes });
-      }
-      await db.cola.bulkAdd(cola);
-    });
+    for (const tipo of ['productos', 'precios', 'platos', 'producciones'] as const) {
+      for (const registro of (c[tipo] as Registro[] | undefined) ?? []) cola.push({ tipo, registro });
+    }
+    if (c.ajustes) cola.push({ tipo: 'ajustes', registro: c.ajustes });
+    await this.local.guardar(c, cola);
     if (this.estado.online) this.poner({ sync: 'guardando' });
     this.programar(300);
   }
@@ -141,7 +142,7 @@ class Almacen {
     if (!navigator.onLine) { this.poner({ online: false, sync: 'sin conexión' }); return; }
     this.enCurso = true;
     try {
-      const pendientes = await db.cola.toArray();
+      const pendientes = await this.local.colaTodos();
       if (pendientes.length) {
         this.poner({ sync: 'guardando' });
         const paquete: Record<string, unknown> = {};
@@ -152,10 +153,10 @@ class Almacen {
           else ((paquete[p.tipo] ??= []) as unknown[]).push(p.registro);
         }
         await llamar(clave, 'guardar', paquete);
-        await db.cola.bulkDelete(pendientes.map((p) => p.n!));
+        await this.local.colaBorrar(pendientes.map((p) => p.n!));
       }
       await this.traer(clave);
-      this.poner({ sync: (await db.cola.count()) ? 'guardando' : 'guardado', online: true });
+      this.poner({ sync: (await this.local.colaTodos()).length ? 'guardando' : 'guardado', online: true });
     } catch (e) {
       if (e instanceof ErrorClave) { this.olvidarClave(); return; }
       this.poner({ sync: 'sin conexión' });
@@ -173,7 +174,7 @@ class Almacen {
       await llamar(clave, 'cargarIniciales', datosIniciales(hoyIso(), Date.now()));
       r = await llamar<Leido>(clave, 'leer');
     }
-    const pendientes = new Set((await db.cola.toArray()).map((p) => p.tipo + ':' + p.registro.id));
+    const pendientes = new Set((await this.local.colaTodos()).map((p) => p.tipo + ':' + p.registro.id));
     const local = this.estado.todo;
     const cambios: Cambios = {};
     for (const tipo of ['productos', 'precios', 'platos', 'producciones'] as const) {
@@ -188,13 +189,7 @@ class Almacen {
     const aj = r.datos.ajustes;
     if (aj && !pendientes.has('ajustes:' + aj.id) && aj.updatedAt > local.ajustes.updatedAt) cambios.ajustes = aj;
     if (!Object.keys(cambios).length) return;
-    await db.transaction('rw', [db.productos, db.precios, db.platos, db.producciones, db.ajustes], async () => {
-      if (cambios.productos) await db.productos.bulkPut(cambios.productos);
-      if (cambios.precios) await db.precios.bulkPut(cambios.precios);
-      if (cambios.platos) await db.platos.bulkPut(cambios.platos);
-      if (cambios.producciones) await db.producciones.bulkPut(cambios.producciones);
-      if (cambios.ajustes) await db.ajustes.put(cambios.ajustes);
-    });
+    await this.local.guardar(cambios, []);
     this.poner({ todo: aplicar(this.estado.todo, cambios) });
   }
 
@@ -233,23 +228,22 @@ class Almacen {
 
   /** Cambios guardados en el dispositivo que todavía no se han subido. */
   pendientes(): Promise<number> {
-    return db.cola.count();
+    return this.local.colaTodos().then((x) => x.length);
   }
 
   /** Borra la clave y la copia local (no los datos de la hoja). */
   async cerrarSesion() {
     try { localStorage.removeItem(CLAVE_LS); localStorage.setItem(SALIO_LS, '1'); } catch { /* sin almacenamiento */ }
-    await Promise.all([db.productos.clear(), db.precios.clear(), db.platos.clear(), db.producciones.clear(), db.ajustes.clear(), db.cola.clear(), db.meta.clear()]);
+    await this.local.limpiar();
     this.poner({ clave: null, errorClave: false, sync: 'guardado', todo: VACIO });
   }
 
   async leerMeta<T>(k: string): Promise<T | undefined> {
-    return (await db.meta.get(k))?.v as T | undefined;
+    try { return (await this.local.metaLeer(k)) as T | undefined; } catch { return undefined; }
   }
 
   async ponerMeta(k: string, v: unknown) {
-    if (v === undefined) await db.meta.delete(k);
-    else await db.meta.put({ k, v });
+    try { await this.local.metaPoner(k, v); } catch { /* sin almacenamiento */ }
   }
 }
 
