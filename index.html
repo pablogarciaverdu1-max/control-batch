@@ -32,6 +32,35 @@ input[type=search]::-webkit-search-cancel-button{display:none}
 <body>
 <div id="root"><p style="margin:0;padding:48px 24px;font-size:16px;color:#4A5672">Cargando Mi cocina…</p></div>
 <noscript><p style="padding:0 24px">Mi cocina necesita JavaScript activado.</p></noscript>
+<script>
+// Plan B: si la app no arranca (error o más de 12 s cargando), explica qué pasa en vez de quedarse esperando.
+(function () {
+  var hecho = false;
+  function mostrar(msg) {
+    var r = document.getElementById('root');
+    if (hecho || !r || r.getAttribute('data-montado')) return;
+    hecho = true;
+    r.innerHTML = '<div style="min-height:100dvh;background:#14213D;color:#fff;padding:48px 24px;box-sizing:border-box;display:flex;flex-direction:column;gap:16px;font-family:Figtree,system-ui,sans-serif">' +
+      '<h1 style="margin:0;font-size:28px;font-weight:800">La app no ha podido arrancar</h1>' +
+      '<p style="margin:0;font-size:16px;line-height:1.45;color:#C9D1E4">Prueba a recargar. Si sigue igual, borra la copia del dispositivo (tus datos de la hoja de Google no se tocan; solo se pierde lo que no se haya subido todavía).</p>' +
+      '<code id="plan-b-error" style="background:rgba(255,255,255,0.08);border-radius:12px;padding:12px;font-size:13px;white-space:pre-wrap;word-break:break-word"></code>' +
+      '<button id="plan-b-recargar" style="height:60px;border:none;border-radius:18px;background:#FF9F1C;color:#14213D;font-size:18px;font-weight:800">Recargar</button>' +
+      '<button id="plan-b-borrar" style="height:56px;border:2px solid #C9D1E4;border-radius:18px;background:transparent;color:#fff;font-size:16px;font-weight:700">Borrar la copia del dispositivo y recargar</button></div>';
+    document.getElementById('plan-b-error').textContent = msg + '\n' + navigator.userAgent;
+    document.getElementById('plan-b-recargar').onclick = function () { location.reload(); };
+    document.getElementById('plan-b-borrar').onclick = function () {
+      var tareas = [];
+      try { if (navigator.serviceWorker) tareas.push(navigator.serviceWorker.getRegistrations().then(function (rs) { return Promise.all(rs.map(function (x) { return x.unregister(); })); })); } catch (e) {}
+      try { if (window.caches) tareas.push(caches.keys().then(function (ks) { return Promise.all(ks.map(function (k) { return caches.delete(k); })); })); } catch (e) {}
+      try { indexedDB.deleteDatabase('mi-cocina'); } catch (e) {}
+      Promise.all(tareas).then(function () { location.reload(); }, function () { location.reload(); });
+    };
+  }
+  window.addEventListener('error', function (e) { mostrar('Error: ' + (e.message || e.error || 'desconocido') + (e.filename ? ' (' + e.filename + ':' + e.lineno + ')' : '')); });
+  window.addEventListener('unhandledrejection', function (e) { var r = e.reason; mostrar('Error: ' + ((r && (r.stack || r.message)) || r)); });
+  setTimeout(function () { mostrar('La app lleva más de 12 segundos cargando.'); }, 12000);
+})();
+</script>
 <script type="module" src="/src/main.tsx"></script>
 </body>
 </html>

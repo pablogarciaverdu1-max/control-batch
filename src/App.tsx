@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
 import { useApp } from './data/almacen';
 import { Inicio } from './screens/Inicio';
@@ -16,6 +17,8 @@ import { ProduccionDetalle } from './screens/historial/ProduccionDetalle';
 
 export function App() {
   const { listo, clave } = useApp();
+  // Avisa al plan B de index.html de que la app ya ha arrancado
+  useEffect(() => { if (listo) document.getElementById('root')?.setAttribute('data-montado', '1'); }, [listo]);
   if (!listo) return <p style={{ margin: 0, padding: "48px 24px", fontSize: 16, color: "#4A5672" }}>Cargando Mi cocina…</p>;
   if (!clave) return <Acceso />;
   return (
